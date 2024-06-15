@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="HibernateEnversState" useSpringProperties="true" />
+  <component name="JpaBuddyIdeaProjectConfig" ddlActionDbType="postgres" migrateIndexesAndConstraints="true" newRepositoryParent="org.springframework.data.jpa.repository.JpaRepository">
+    <option name="defaultUnitInitialized" value="true" />
+    <option name="migrateIndexesAndConstraints" value="true" />
+    <option name="reLastEntityCreationPackage" value="backend/src/main/java/com/moncolisapp/backend/entities" />
+    <option name="renamerInitialized" value="true" />
+    <option name="reverseEngineeringLastDbConnectionId" value="14ec94a4-2d83-46e6-83ab-e141e75eff5a__colis_db_public" />
+  </component>
+  <component name="JpaPluginProjectSettings" reUseValidationAnnotation="false" reExcludeTablePrefixes="" reExcludeColumnPrefixes="" reExcludeTableSuffixes="" reExcludeColumnSuffixes="" dtoClassNamePostfix="DTO">
+    <option name="entityNameTemplate" />
+    <option name="generateJpaOnGetter" value="true" />
+    <option name="isLombokBuilder" value="true" />
+    <option name="isLombokAllArgsConstructor" value="true" />
+    <option name="isLombokNoArgsConstructor" value="true" />
+    <option name="useLazyOnToOneAssociations" value="true" />
+    <option name="scaffoldingLanguage" />
+  </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="backend.main" name="Default">
+        <packages>
+          <package value="com.moncolisapp.backend" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="API" name="Default" />
+    </persistence-units>
+  </component>
+</project>

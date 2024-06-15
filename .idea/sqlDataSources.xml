@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="e88b16dc-194b-47b9-beaa-425c60a5c131" name="moncolis@localhost Mapping">
+      <data-sources db="13820590-3fce-417f-a733-c976174d41f9" />
+      <scope>
+        <node negative="1">
+          <node kind="database" qname="colisApp" />
+          <node kind="database" qname="moncolis">
+            <node kind="schema" negative="1" />
+          </node>
+        </node>
+      </scope>
+    </mapping>
+  </component>
+</project>

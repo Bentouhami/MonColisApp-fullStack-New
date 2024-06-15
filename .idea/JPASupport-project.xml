@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoGeneratorSettingsState">
+    <option name="addEntitySuffix" value="Entity" />
+    <option name="ignoredFields">
+      <set>
+        <option value="" />
+      </set>
+    </option>
+    <option name="moduleName" value="backend" />
+    <option name="moduleNameToSettings">
+      <map>
+        <entry key="Fanatic-React-Template">
+          <value>
+            <ModuleSettings />
+          </value>
+        </entry>
+        <entry key="backend">
+          <value>
+            <ModuleSettings>
+              <option name="controllerPackageName" value="com.moncolisapp.backend.controller" />
+              <option name="controllerParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+              <option name="dtoParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+              <option name="entityPackageName" value="com.moncolisapp.backend.entity" />
+              <option name="entityParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+              <option name="generateController" value="true" />
+              <option name="mapperXmlParentDirectory" value="E:\fullstack_project\MonColisApp - Free React Landing Page\MonColisApp-React-frontend\backend\src\main\resources" />
+              <option name="repositoryPackageName" value="com.moncolisapp.backend.repository" />
+              <option name="repositoryParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+              <option name="serviceParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+              <option name="voParentDirectory" value="$PROJECT_DIR$/backend/src/main/java" />
+            </ModuleSettings>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="useJakartaEE" value="true" />
+  </component>
+  <component name="DatabaseSettingsState">
+    <option name="language" value="fr-FR" />
+  </component>
+</project>

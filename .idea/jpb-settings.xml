@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="frondend/src/main/resources/db/migration" flywayMigrationDescription="" useFlywayForce="true" />
+  <component name="IocStateComponent">
+    <option name="smartCompletionAvailability" value="ENABLE_EXISTING" />
+  </component>
+</project>

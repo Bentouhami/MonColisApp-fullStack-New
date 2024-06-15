@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig">
+    <option name="snapshotDbValue" value="e56a6cf5-382a-4d16-814f-59e34e39b2ef__moncolis_public" />
+    <option name="snapshotDirValue" value="$PROJECT_DIR$/backend/src/main/resources/db" />
+    <option name="sourceModelValue" value="Default" />
+    <option name="targetDbValue" value="5d29a4d4-b842-4465-968b-84a48f0e35e7" />
+    <option name="targetDiffType" value="SNAPSHOT" />
+    <option name="targetSnapshotValue" value="$PROJECT_DIR$/backend/src/main/resources/db/data-model-snapshot.json" />
+  </component>
+</project>
