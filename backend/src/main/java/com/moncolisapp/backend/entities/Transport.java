@@ -1,9 +1,6 @@
 package com.moncolisapp.backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -17,6 +14,9 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "transports")
 public class Transport {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
     private Boolean estDisponible = false;
@@ -31,12 +31,12 @@ public class Transport {
 
     private BigDecimal volumeDeBase;
 
-    @Id
-    @ColumnDefault("nextval('transports_id_transport_seq'")
-    @Column(name = "id_transport", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+//    @Id
+//    @ColumnDefault("nextval('transports_id_transport_seq'")
+//    @Column(name = "id_transport", nullable = false)
+//    public Integer getId() {
+//        return id;
+//    }
 
     @Column(name = "est_disponible", nullable = false)
     public Boolean getEstDisponible() {

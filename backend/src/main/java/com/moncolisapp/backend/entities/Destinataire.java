@@ -2,7 +2,8 @@ package com.moncolisapp.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+
+import java.io.Serializable;
 
 @Builder
 @AllArgsConstructor
@@ -13,7 +14,10 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "destinataires", indexes = {
         @Index(name = "idx_destinataires_id_address", columnList = "id_address")
 })
-public class Destinataire {
+public class Destinataire implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
     private String nomPrenom;
@@ -21,15 +25,16 @@ public class Destinataire {
     private String telephone;
 
     private String email;
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_address", nullable = false)
     private Address idAddress;
 
-    @Id
-    @ColumnDefault("nextval('destinataires_id_destinataire_seq'")
-    @Column(name = "id_destinataire", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+//    @Id
+//    @ColumnDefault("nextval('destinataires_id_destinataire_seq'")
+//    @Column(name = "id_destinataire", nullable = false)
+//    public Integer getId() {
+//        return id;
+//    }
 
     @Column(name = "nom_prenom", nullable = false, length = 150)
     public String getNomPrenom() {
@@ -46,8 +51,8 @@ public class Destinataire {
         return email;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_address", nullable = false)
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "id_address", nullable = false)
     public Address getIdAddress() {
         return idAddress;
     }

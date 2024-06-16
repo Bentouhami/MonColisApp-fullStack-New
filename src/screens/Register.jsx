@@ -50,7 +50,7 @@ export default function Register() {
                 sexe: values.sexe === "male",
             };
             const response = await axios.post("/users/auth/register", updatedValues);
-            if (response.data === "ok") {
+            if (response.data === "User created") {
                 console.log("Utilisateur inscrit avec succès:", response.data);
                 setTimeout(() => navigate("/simulation"), 5000);
             }

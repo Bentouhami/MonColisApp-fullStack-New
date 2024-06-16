@@ -1,15 +1,14 @@
 package com.moncolisapp.backend.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserRegisterRequest {
+
+public class UserLoginResponse {
     private String nom;
     private String prenom;
     private String dateDeNaissance;
@@ -21,5 +20,4 @@ public class UserRegisterRequest {
     private String ville;
     private String codepostal;
     private String pays;
-    private String password;
 }

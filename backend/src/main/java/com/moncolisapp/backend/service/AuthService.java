@@ -1,5 +1,6 @@
 package com.moncolisapp.backend.service;
 
+import com.moncolisapp.backend.auth.UserLoginResponse;
 import com.moncolisapp.backend.auth.UserRegisterRequest;
 import com.moncolisapp.backend.dto.AddressDTO;
 import com.moncolisapp.backend.dto.ClientDTO;
@@ -10,23 +11,34 @@ import com.moncolisapp.backend.mapper.ClientMapper;
 import com.moncolisapp.backend.repository.AddressRepository;
 import com.moncolisapp.backend.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AuthService implements IAuthService {
 
 
     /*region private variables*/
-    private AddressDTO addressDTO;
     @Autowired
     private AddressRepository addressRepository;
-    private ClientDTO clientDTO;
+
     @Autowired
-    private  ClientMapper clientMapper;
+    private ClientRepository clientRepository;
+
     @Autowired
-    private  ClientRepository clientRepository;
+    private AddressMapper addressMapper;
     @Autowired
-    private  AddressMapper addressMapper;
+    private ClientMapper clientMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
 
     /*endregion*/
@@ -42,17 +54,17 @@ public class AuthService implements IAuthService {
         // GET
 
         // verify if the user already exists
-        if (exitsClientDTOByEmail(userRegisterRequest.email())) {
+        if (existsClientByEmail(userRegisterRequest.getEmail())) {
             return "User already exists";
         }
 
         // create the addresse object
         AddressDTO addressDTO = new AddressDTO(
-                userRegisterRequest.rue(),
-                userRegisterRequest.numero(),
-                userRegisterRequest.ville(),
-                userRegisterRequest.codepostal(),
-                userRegisterRequest.pays()
+                userRegisterRequest.getRue(),
+                userRegisterRequest.getNumero(),
+                userRegisterRequest.getVille(),
+                userRegisterRequest.getCodepostal(),
+                userRegisterRequest.getPays()
         );
 
         // verify if the address already exists
@@ -70,23 +82,173 @@ public class AuthService implements IAuthService {
             address.setCodepostal(addressDTO.codepostal());
             address.setPays(addressDTO.pays());
             addressRepository.save(address);
-            System.out.println("address created");
         }
 
+        // create the clientDTO object
+        ClientDTO clientDTO = getClientDTO(userRegisterRequest, addressDTO);
 
         // create the client object
-        Client newClient = new Client();
+        Client newClient = clientMapper.toEntity(clientDTO);
         newClient.setIdAddress(address);
-        newClient.setNom(clientDTO.getNom());
-        newClient.setPrenom(clientDTO.getPrenom());
-        newClient.setEmail(clientDTO.getEmail());
-        newClient.setDateDeNaissance(clientDTO.getDateDeNaissance());
-        newClient.setSexe(clientDTO.getSexe());
-        clientRepository.save(newClient);
-
+//        newClient.setMotDePasse(passwordEncoder.encode(userRegisterRequest.getPassword()));
         this.clientRepository.save(newClient);
         // create the user
         return "User created";
+    }
+
+
+    /**
+     * Login a user in the database with the given userLoginRequest object
+     *
+     * @param email    email of the user to log in
+     * @param password password of the user to log in
+     * @return String response
+     */
+    @Override
+    public ResponseEntity<Map<String, Object>> login(String email, String password) {
+        Map<String, Object> response = new HashMap<>();
+
+        boolean existsUser = clientRepository.existsClientByEmail(email);
+        if (!existsUser) {
+            response.put("success", false);
+            response.put("message", "User not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        Client client = clientRepository.findClientByEmail(email);
+        if (client == null) {
+            response.put("success", false);
+            response.put("message", "Client not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (!passwordEncoder.matches(password, client.getMotDePasse())) {
+            response.put("success", false);
+            response.put("message", "Invalid password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        Address address = addressRepository.findById(client.getIdAddress().getId()).orElse(null);
+        if (address == null) {
+            response.put("success", false);
+            response.put("message", "Address not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        UserLoginResponse loginResponse = new UserLoginResponse(
+                client.getNom(),
+                client.getPrenom(),
+                client.getDateDeNaissance().toString(),
+                StringToBoolean(client.getSexe()),
+                client.getTelephone(),
+                client.getEmail(),
+                address.getRue(),
+                address.getNumero(),
+                address.getVille(),
+                address.getCodepostal(),
+                address.getPays()
+        );
+
+        response.put("success", true);
+        response.put("data", loginResponse);
+        return ResponseEntity.ok(response);
+    }
+//    public ResponseEntity<String> login(String email, String password) {
+//
+//        boolean existsUser = existsClientByEmail(email);
+//        if (!existsUser) {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//        Client client = findClientByEmail(email);
+//
+//
+//        if (client == null) {
+//            return ResponseEntity.badRequest().body("Client not found");
+//        }
+//        Integer addressId = getAddressIdByClientID(client.getId());
+//
+//        Optional<Address> address = addressRepository.findById(addressId);
+//        AddressDTO addressDTO = addressMapper.toDto(address.get());
+//        client.setIdAddress(addressMapper.partialUpdate(addressDTO, client.getIdAddress()));
+//
+//
+//        // create a UserLoginResponse object
+//        UserLoginResponse loginResponse = new UserLoginResponse();
+//
+//        // get the password of the user in the database
+//        String mot_de_passe = client.getMotDePasse();
+//
+//        // if the password is the same as the password in the database
+//        if (password.equals(mot_de_passe)) {
+//            // create a new UserLoginResponse object
+//
+//                    loginResponse.setNom(client.getNom());
+//                    loginResponse.setPrenom(client.getPrenom());
+//                    loginResponse.setDateDeNaissance(client.getDateDeNaissance().toString());
+//                    loginResponse.setSexe(getSexe(client.getSexe()));
+//                    loginResponse.setTelephone(client.getTelephone());
+//                    loginResponse.setEmail(client.getEmail());
+//                    loginResponse.setRue(addressDTO.rue());
+//                    loginResponse.setNumero(addressDTO.numero());
+//                    loginResponse.setVille(addressDTO.ville());
+//                    loginResponse.setCodepostal(addressDTO.codepostal());
+//                    loginResponse.setPays(addressDTO.pays());
+//        }
+//        return ResponseEntity.ok(loginResponse.toString());
+//    }
+
+    private Integer getAddressIdByClientID(Integer id) {
+        return clientRepository.findAddressIdByClientID(id);
+    }
+
+    private String StringToBoolean(Boolean sexe) {
+        return sexe ? "male" : "female";
+    }
+
+    private String getSexe(Boolean sexe) {
+        return sexe ? "male" : "female";
+    }
+
+    private Client findClientByEmail(String email) {
+        if (clientRepository.existsClientByEmail(email)) {
+            return clientRepository.findClientByEmail(email);
+        }
+        return null;
+    }
+
+
+    /**
+     * Create the clientDTO object
+     *
+     * @param userRegisterRequest UserRegisterRequest object to register a new user in the database
+     * @param addressDTO          AddressDTO object to register a new user in the database
+     * @return ClientDTO object
+     */
+    private ClientDTO getClientDTO(UserRegisterRequest userRegisterRequest, AddressDTO addressDTO) {
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setNom(userRegisterRequest.getNom());
+        clientDTO.setPrenom(userRegisterRequest.getPrenom());
+        clientDTO.setEmail(userRegisterRequest.getEmail());
+        clientDTO.setDateDeNaissance(getLocalDateFromString(userRegisterRequest.getDateDeNaissance()));
+        clientDTO.setSexe(getBooleanFromString(userRegisterRequest.getSexe()));
+        clientDTO.setTelephone(userRegisterRequest.getTelephone());
+        clientDTO.setIdAddress(addressDTO);
+        clientDTO.setMotDePasse(passwordEncoder.encode(userRegisterRequest.getPassword()));
+        return clientDTO;
+    }
+
+    private LocalDate getLocalDateFromString(String s) {
+        return LocalDate.parse(s);
+    }
+
+    /**
+     * Converts a string to a boolean
+     *
+     * @param sexe the string to convert
+     * @return the boolean
+     */
+    private Boolean getBooleanFromString(String sexe) {
+        return sexe.equalsIgnoreCase("male");
     }
 
 
@@ -114,8 +276,7 @@ public class AuthService implements IAuthService {
      * @param userEmail String email to check
      * @return boolean response
      */
-    boolean exitsClientDTOByEmail(String userEmail) {
-
+    public boolean existsClientByEmail(String userEmail) {
         return clientRepository.existsClientByEmail(userEmail);
     }
 

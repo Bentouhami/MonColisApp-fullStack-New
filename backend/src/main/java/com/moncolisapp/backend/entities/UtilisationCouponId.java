@@ -16,6 +16,8 @@ import java.util.Objects;
 @Embeddable
 public class UtilisationCouponId implements Serializable {
     private static final long serialVersionUID = -2550995604867793644L;
+
+
     private Integer idClient;
 
     private Integer idCoupon;

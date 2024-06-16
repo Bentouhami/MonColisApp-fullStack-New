@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,32 +14,20 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @Entity
 @Table(name = "utilisation_coupons")
-public class UtilisationCoupon {
+public class UtilisationCoupon implements Serializable {
+    @EmbeddedId
     private UtilisationCouponId id;
 
-    private Client idClient;
-
-    private Coupon idCoupon;
-
-    @EmbeddedId
-    public UtilisationCouponId getId() {
-        return id;
-    }
 
     @MapsId("idClient")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_client", nullable = false)
-    public Client getIdClient() {
-        return idClient;
-    }
+    private Client idClient;
 
     @MapsId("idCoupon")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_coupon", nullable = false)
-    public Coupon getIdCoupon() {
-        return idCoupon;
-    }
+    private Coupon idCoupon;
+
 
 }

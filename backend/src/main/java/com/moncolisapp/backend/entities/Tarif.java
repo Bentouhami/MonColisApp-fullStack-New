@@ -1,12 +1,9 @@
 package com.moncolisapp.backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -16,7 +13,10 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "tarifs")
-public class Tarif {
+public class Tarif implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
     private BigDecimal poidsMax;
@@ -25,12 +25,12 @@ public class Tarif {
 
     private BigDecimal prixParKilo;
 
-    @Id
-    @ColumnDefault("nextval('tarifs_id_tarif_seq'")
-    @Column(name = "id_tarif", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+//    @Id
+//    @ColumnDefault("nextval('tarifs_id_tarif_seq'")
+//    @Column(name = "id_tarif", nullable = false)
+//    public Integer getId() {
+//        return id;
+//    }
 
     @Column(name = "poids_max", nullable = false, precision = 10, scale = 2)
     public BigDecimal getPoidsMax() {

@@ -2,10 +2,10 @@ package com.moncolisapp.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -21,7 +21,9 @@ import java.time.LocalDate;
         @Index(name = "idx_envois_id_client", columnList = "id_client"),
         @Index(name = "idx_envois_id_destinataire", columnList = "id_destinataire")
 })
-public class Envois {
+public class Envois implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String codeDeSuivi;
@@ -38,26 +40,48 @@ public class Envois {
 
     private String statut;
 
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_agence_arrivee", nullable = false)
     private Agence idAgenceArrivee;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_agence_depart", nullable = false)
     private Agence idAgenceDepart;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_client", nullable = false)
     private Client idClient;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_coupon")
     private Coupon idCoupon;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_destinataire", nullable = false)
     private Destinataire idDestinataire;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_tarif", nullable = false)
     private Tarif idTarif;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_transport", nullable = false)
     private Transport idTransport;
 
-    @Id
-    @ColumnDefault("nextval('envois_id_envoi_seq'")
-    @Column(name = "id_envoi", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+//    @Id
+//    @ColumnDefault("nextval('envois_id_envoi_seq'")
+//    @Column(name = "id_envoi", nullable = false)
+//    public Integer getId() {
+//        return id;
+//    }
 
     @Column(name = "code_de_suivi", nullable = false, length = 20)
     public String getCodeDeSuivi() {
@@ -94,53 +118,5 @@ public class Envois {
         return statut;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_agence_arrivee", nullable = false)
-    public Agence getIdAgenceArrivee() {
-        return idAgenceArrivee;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_agence_depart", nullable = false)
-    public Agence getIdAgenceDepart() {
-        return idAgenceDepart;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_client", nullable = false)
-    public Client getIdClient() {
-        return idClient;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_coupon")
-    public Coupon getIdCoupon() {
-        return idCoupon;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_destinataire", nullable = false)
-    public Destinataire getIdDestinataire() {
-        return idDestinataire;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_tarif", nullable = false)
-    public Tarif getIdTarif() {
-        return idTarif;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_transport", nullable = false)
-    public Transport getIdTransport() {
-        return idTransport;
-    }
 
 }

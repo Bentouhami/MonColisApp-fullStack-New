@@ -2,10 +2,10 @@ package com.moncolisapp.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -15,9 +15,18 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "colis")
-public class Colis {
+public class Colis implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //    @OnDelete(action = OnDeleteAction.RESTRICT)
+    //    @JoinColumn(name = "id_envoi", nullable = false)
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_envoi", nullable = false)
     private Envois idEnvoi;
 
     private BigDecimal hauteur;
@@ -30,20 +39,13 @@ public class Colis {
 
     private BigDecimal volumeColis;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ColumnDefault("nextval('colis_id_colis_seq'")
-    @Column(name = "id_colis", nullable = false)
-    public Integer getId() {
-        return id;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "id_envoi", nullable = false)
-    public Envois getIdEnvoi() {
-        return idEnvoi;
-    }
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @ColumnDefault("nextval('colis_id_colis_seq'")
+//    @Column(name = "id_colis", nullable = false)
+//    public Integer getId() {
+//        return id;
+//    }
 
     @Column(name = "hauteur", nullable = false, precision = 10, scale = 2)
     public BigDecimal getHauteur() {

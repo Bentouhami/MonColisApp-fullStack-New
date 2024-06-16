@@ -1,10 +1,9 @@
 package com.moncolisapp.backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Builder
 @AllArgsConstructor
@@ -13,8 +12,10 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "addresses")
-public class Address {
+public class Address implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
     private String rue;

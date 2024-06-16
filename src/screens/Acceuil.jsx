@@ -9,62 +9,6 @@ import HeaderImage from "../assets/img/welcome.svg";
 import {redirect} from "react-router-dom";
 
 export default function Acceuil() {
-    // const handleLogin = async () => {
-    //     try {
-    //         // Step 1: Request email from the user
-    //         const { value: email } = await Swal.fire({
-    //             title: "Input email address",
-    //             input: "email",
-    //             inputLabel: "Your email address",
-    //             inputPlaceholder: "Enter your email address"
-    //         });
-    //
-    //         if (email) {
-    //             // Step 2: Send email to API to check if it exists
-    //             const emailCheckResponse = await axios.post("/users/check-email", { email });
-    //
-    //             if (emailCheckResponse.data.exists) {
-    //                 // Step 3: Request password from the user if email exists
-    //                 const { value: password } =  await Swal.fire({
-    //                     title: "Enter your password",
-    //                     input: "password",
-    //                     inputLabel: "Password",
-    //                     inputPlaceholder: "Enter your password",
-    //                     inputAttributes: {
-    //                         maxlength: "10",
-    //                         autocapitalize: "off",
-    //                         autocorrect: "off"
-    //                     }
-    //                 });
-    //
-    //                 if (password) {
-    //                     // Step 4: Send email and password to API to verify credentials
-    //                     const loginResponse = await axios.post("/users/login", { email, password });
-    //
-    //                     if (loginResponse.data.success) {
-    //                         // Step 5: Open a session for the user if credentials are correct
-    //                         Swal.fire(`Welcome back, ${email}`).then(r => {
-    //                             if (r.value) {
-    //                                 // Here you can redirect the user or perform other actions upon successful login
-    //                                 // redirect user to /simulation
-    //                                 redirect("/simulation");
-    //                             }
-    //                         });
-    //                         // Here you can redirect the user or perform other actions upon successful login
-    //                         // redirect user to /simulation
-    //                     } else {
-    //                         await Swal.fire("Invalid email or password");
-    //                     }
-    //                 }
-    //             } else {
-    //                 await Swal.fire("Email not found");
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error("There was an error!", error);
-    //         await Swal.fire("An error occurred, please try again");
-    //     }
-    // };
 
     const handleLogin = async () => {
         try {
@@ -78,7 +22,7 @@ export default function Acceuil() {
 
             if (email) {
                 // Step 2: Send email to API to check if it exists
-                const emailCheckResponse = await axios.post("/users/check-email", { email });
+                const emailCheckResponse = await axios.post("/users/auth/check-email", { email: email });
 
                 if (emailCheckResponse.data.exists) {
                     // Step 3: Request password from the user if email exists
@@ -96,7 +40,7 @@ export default function Acceuil() {
 
                     if (password) {
                         // Step 4: Send email and password to API to verify credentials
-                        const loginResponse = await axios.post("/users/login", { email, password });
+                        const loginResponse = await axios.post("/users/auth/login", { email, password });
 
                         if (loginResponse.data.success) {
                             // Step 5: Open a session for the user if credentials are correct
