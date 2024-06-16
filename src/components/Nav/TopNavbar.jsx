@@ -68,7 +68,9 @@ export default function TopNavbar() {
                     <UlWrapperRight className="flexNullCenter">
                         {isAuthenticated ? (
                             <li className="semiBold font15 pointer" onClick={handleLogout}>
-                                <span style={{ padding: "10px 30px 10px 0", cursor: "pointer" }}>Logout</span>
+                                <span style={{ padding: "10px 30px 10px 0", cursor: "pointer" }}>
+                                    Se Déconnecter
+                                </span>
                             </li>
                         ) : (
                             <>

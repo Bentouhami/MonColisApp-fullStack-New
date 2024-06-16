@@ -1,11 +1,22 @@
-import React from "react";
+import React, {useContext} from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 // Assets
 import CloseIcon from "../../assets/svg/CloseIcon";
 import LogoIcon from "../../assets/svg/Logo";
+import {AuthContext} from "../Elements/AuthContext";
 
 export default function Sidebar({ sidebarOpen, toggleSidebar }) {
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
+    const navigate = useNavigate();
+
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        toggleSidebar(false);
+        navigate('');
+    };
     return (
         <Wrapper className="animate darkBg" sidebarOpen={sidebarOpen}>
             <SidebarHeader className="flexSpaceCenter">
@@ -42,17 +53,30 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
                     </Link>
                 </li>
             </UlStyle>
-            <UlStyle className="flexSpaceCenter">
-                <li className="semiBold font15 pointer">
-                    <Link to="/login" onClick={() => toggleSidebar(!sidebarOpen)} style={{ padding: "10px 30px 10px 0" }} className="whiteColor">
-                        Se connecter
-                    </Link>
-                </li>
-                <li className="semiBold font15 pointer flexCenter">
-                    <Link to="/register" onClick={() => toggleSidebar(!sidebarOpen)} className="radius8 lightBg" style={{ padding: "10px 15px" }}>
-                        Inscription
-                    </Link>
-                </li>
+            <UlStyle className="flexNullCenter flexColumn">
+                {isAuthenticated ? (
+                        <li className="semiBold font15 pointer">
+                            <Link to="/login" onClick={handleLogout} style={{ padding: "10px 15px" }} className="whiteColor">
+                                Se Déconnecter
+                            </Link>
+                        </li>
+                    // <li className="semiBold font15 pointer" onClick={handleLogout}>
+                    //     <span style={{ padding: "10px 30px 10px 0", cursor: "pointer" }}>Se Déconnecter</span>
+                    // </li>
+                ) : (
+                    <>
+                        <li className="semiBold font15 pointer">
+                            <Link to="/login" onClick={() => toggleSidebar(!sidebarOpen)} style={{ padding: "10px 30px 10px 0" }} className="whiteColor">
+                                Se connecter
+                            </Link>
+                        </li>
+                        <li className="semiBold font15 pointer flexCenter">
+                            <Link to="/register" onClick={() => toggleSidebar(!sidebarOpen)} className="radius8 lightBg" style={{ padding: "10px 15px" }}>
+                                Inscription
+                            </Link>
+                        </li>
+                    </>
+                )}
             </UlStyle>
         </Wrapper>
     );
