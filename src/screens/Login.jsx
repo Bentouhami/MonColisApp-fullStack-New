@@ -1,10 +1,12 @@
-import React from "react";
+// src/screens/Login.jsx
+import React, { useContext } from "react";
 import styled from "styled-components";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "../config/axiosConfig"; // Importer votre configuration Axios
-import ContactImg1 from "../assets/img/sign-up.svg";
+import LoginImg from "../assets/img/loging.svg";
+import { AuthContext } from "../components/Elements/AuthContext"; // Importer le contexte d'authentification
 
 // Définir le schéma de validation avec Yup
 const validationSchema = Yup.object({
@@ -14,6 +16,7 @@ const validationSchema = Yup.object({
 
 export default function Login() {
     const navigate = useNavigate();
+    const { setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
 
     const formik = useFormik({
         initialValues: {
@@ -22,14 +25,24 @@ export default function Login() {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            // Convertir le sexe en booléen avant d'envoyer la requête
-            const updatedValues = {
-                ...values,
-            };
-            const response = await axios.post("/users/auth/login", updatedValues);
-            if (response.data === "User connected") {
-                // console.log("Utilisateur inscrit avec succès:", response.data);
-                setTimeout(() => navigate("/simulation"), 5000);
+            try {
+                const response = await axios.post("/users/auth/login", {
+                    email: values.email,
+                    password: values.password
+                });
+
+                if (response.data.success) {
+                    // Set the token in local storage for the next request to the server to authenticate the user
+                    localStorage.setItem('token', response.data.token);
+                    setIsAuthenticated(true); // Mettre à jour l'état d'authentification
+                    navigate("/simulation");
+                } else {
+                    // Handle login failure
+                    alert("Invalid email or password");
+                }
+            } catch (error) {
+                console.error("There was an error!", error);
+                // Handle error
             }
         },
     });
@@ -39,7 +52,7 @@ export default function Login() {
             <div className="lightBg">
                 <div className="container">
                     <HeaderInfo>
-                        <h1 className=" mt-5font40 extraBold">Se Connecter</h1>
+                        <h1 className="mt-5 font40 extraBold">Se Connecter</h1>
                         <p className="font13">
                             Veuillez remplir le formulaire ci-dessous pour te connecter.
                         </p>
@@ -47,40 +60,55 @@ export default function Login() {
                     <div className="row" style={{paddingBottom: "30px"}}>
                         <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <Form onSubmit={formik.handleSubmit}>
-
                                 <Section>
                                     <h2>Données de connexion</h2>
                                     <div className="col">
                                         <label className="font13">Email :</label>
-                                        <input type="email" name="email" className="font20 extraBold"
-                                               value={formik.values.email} onChange={formik.handleChange}
-                                               onBlur={formik.handleBlur} required/>
-                                        {formik.touched.email && formik.errors.email ?
-                                            <ErrorMessage>{formik.errors.email}</ErrorMessage> : null}
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            className="font20 extraBold"
+                                            value={formik.values.email}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            required
+                                        />
+                                        {formik.touched.email && formik.errors.email ? (
+                                            <ErrorMessage>{formik.errors.email}</ErrorMessage>
+                                        ) : null}
                                     </div>
                                     <div className="row">
                                         <div className="col">
                                             <label className="font13">Mot de passe :</label>
-                                            <input type="password" name="password" className="font20 extraBold"
-                                                   value={formik.values.password} onChange={formik.handleChange}
-                                                   onBlur={formik.handleBlur} required/>
-                                            {formik.touched.password && formik.errors.password ?
-                                                <ErrorMessage>{formik.errors.password}</ErrorMessage> : null}
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                className="font20 extraBold"
+                                                value={formik.values.password}
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                required
+                                            />
+                                            {formik.touched.password && formik.errors.password ? (
+                                                <ErrorMessage>{formik.errors.password}</ErrorMessage>
+                                            ) : null}
                                         </div>
                                     </div>
                                 </Section>
                             </Form>
-                            <SumbitWrapper className="flex">
-                                <ButtonInput onClick={formik.handleSubmit} type="submit" value="S'inscrire"
-                                             className=" mb-3 pointer animate radius8"
-                                             style={{maxWidth: "220px"}}/>
-                            </SumbitWrapper>
+                                <SumbitWrapper className="flex">
+                                    <ButtonInput
+                                        onClick={formik.handleSubmit}
+                                        type="submit"
+                                        value="Se connecter"
+                                        className="mb-3 pointer animate radius8"
+                                        style={{ maxWidth: "220px" }}
+                                    />
+                                </SumbitWrapper>
                         </div>
                         <RightSide>
                             <ImageWrapper>
-                                <Img className="radius8"
-                                     src={ContactImg1}
-                                     alt="office" style={{zIndex: 9}}/>
+                                <Img className="radius8" src={LoginImg} alt="office" style={{ zIndex: 9 }} />
                             </ImageWrapper>
                         </RightSide>
                     </div>

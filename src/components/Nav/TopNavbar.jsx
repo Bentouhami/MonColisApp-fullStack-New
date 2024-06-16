@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+// src/components/Nav/TopNavbar.jsx
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-// Components
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../Elements/AuthContext"; // Importer le contexte d'authentification
 import Sidebar from "../Nav/Sidebar";
 import Backdrop from "../Elements/Backdrop";
-// Assets
 import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 
 export default function TopNavbar() {
     const [y, setY] = useState(window.scrollY);
     const [sidebarOpen, toggleSidebar] = useState(false);
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => setY(window.scrollY);
@@ -19,6 +21,12 @@ export default function TopNavbar() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, [y]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        navigate('/login');
+    };
 
     return (
         <>
@@ -58,16 +66,24 @@ export default function TopNavbar() {
                         </li>
                     </UlWrapper>
                     <UlWrapperRight className="flexNullCenter">
-                        <li className="semiBold font15 pointer">
-                            <Link to="/login" style={{ padding: "10px 30px 10px 0" }}>
-                                Log in
-                            </Link>
-                        </li>
-                        <li className="semiBold font15 pointer flexCenter">
-                            <Link to="/register" className="radius8 lightBg" style={{ padding: "10px 15px" }}>
-                                Inscription
-                            </Link>
-                        </li>
+                        {isAuthenticated ? (
+                            <li className="semiBold font15 pointer" onClick={handleLogout}>
+                                <span style={{ padding: "10px 30px 10px 0", cursor: "pointer" }}>Logout</span>
+                            </li>
+                        ) : (
+                            <>
+                                <li className="semiBold font15 pointer">
+                                    <Link to="/login" style={{ padding: "10px 30px 10px 0" }}>
+                                        Log in
+                                    </Link>
+                                </li>
+                                <li className="semiBold font15 pointer flexCenter">
+                                    <Link to="/register" className="radius8 lightBg" style={{ padding: "10px 15px" }}>
+                                        Inscription
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </UlWrapperRight>
                 </NavInner>
             </Wrapper>
@@ -104,6 +120,7 @@ const UlWrapper = styled.ul`
     }
 `;
 const UlWrapperRight = styled.ul`
+    display: flex;
     @media (max-width: 760px) {
         display: none;
     }

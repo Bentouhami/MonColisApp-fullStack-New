@@ -1,13 +1,18 @@
-import React from "react";
+// src/screens/Acceuil.jsx
+import React, { useContext } from "react";
 import styled from "styled-components";
 import Swal from "sweetalert2";
 import axios from "../config/axiosConfig"; // Utiliser la configuration Axios
 import FullButton from "../components/Buttons/FullButton";
 import HeaderImage from "../assets/img/welcome.svg";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/Elements/AuthContext"; // Importer le contexte d'authentification
 
 export default function Acceuil() {
     const navigate = useNavigate();
+    // const { setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
+
 
     const handleLogin = async () => {
         try {
@@ -40,10 +45,11 @@ export default function Acceuil() {
                         if (loginResponse.data.success) {
                             // Set the token in local storage for the next request to the server to authenticate the user
                             localStorage.setItem('token', loginResponse.data.token);
+                            setIsAuthenticated(true); // Mettre à jour l'état d'authentification
 
                             Swal.fire(`Welcome back, ${email}`).then(r => {
                                 if (r.value) {
-                                    navigate("/simulation");
+                                    navigate("/");
                                 }
                             });
                         } else {
@@ -71,9 +77,11 @@ export default function Acceuil() {
                         tout en vous offrant un service de Simulation pour vous aider à déterminer
                         le meilleur mode de livraison pour votre colis.
                     </HeaderP>
-                    <BtnWrapper>
-                        <FullButton title="Connexion" action={handleLogin} />
-                    </BtnWrapper>
+                    {!isAuthenticated && (
+                        <BtnWrapper>
+                            <FullButton title="Connexion" action={handleLogin} />
+                        </BtnWrapper>
+                    )}
                 </div>
             </LeftSide>
             <RightSide>

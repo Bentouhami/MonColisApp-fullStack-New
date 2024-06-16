@@ -1,54 +1,40 @@
+// src/App.js
 import React from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// Screens
+import { AuthProvider } from "./components/Elements/AuthContext"; // Importer le fournisseur d'authentification
 import Simulation from "./screens/Simulation.jsx";
 import Tarifs from "./screens/Tarifs.jsx";
 import Contact from "./screens/Contact.jsx";
-import Register from "./screens/Register.jsx"; // Importation du composant Register
+import Register from "./screens/Register.jsx";
 import TopNavbar from "./components/Nav/TopNavbar";
 import Footer from "./screens/Footer.jsx";
 import Acceuil from "./screens/Acceuil";
-import ProtectedResource from "./screens/ProtectedResource";
-import styled from "styled-components";
 import Login from "./screens/Login";
+import ProtectedResource from "./screens/ProtectedResource";
 
 export default function App() {
     return (
-        <Router>
-            <AppWrapper>
+        <AuthProvider>
+            <Router>
                 <Helmet>
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap"
-                        rel="stylesheet"
-                    />
+                    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
+                    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap"
+                          rel="stylesheet"/>
                 </Helmet>
                 <TopNavbar />
-                <ContentWrapper>
-                    <Routes>
-                        <Route path="/" element={<Acceuil />} />
-                        <Route path="/simulation" element={<Simulation />} />
-                        <Route path="/tarif" element={<Tarifs />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/protected-resource" element={<ProtectedResource />} />
-                    </Routes>
-                </ContentWrapper>
+                <Routes>
+                    <Route path="/" element={<Acceuil />} />
+                    <Route path="/simulation" element={<Simulation />} />
+                    <Route path="/tarif" element={<Tarifs />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/protected-resource" element={<ProtectedResource />} />
+                </Routes>
                 <Footer />
-            </AppWrapper>
-        </Router>
+            </Router>
+        </AuthProvider>
     );
 }
-
-const AppWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-`;
-
-const ContentWrapper = styled.div`
-    flex: 1;
-`;
