@@ -11,6 +11,7 @@ import Footer from "./screens/Footer.jsx";
 import Acceuil from "./screens/Acceuil";
 import ProtectedResource from "./screens/ProtectedResource";
 import styled from "styled-components";
+import Login from "./screens/Login";
 
 export default function App() {
     return (
@@ -32,6 +33,7 @@ export default function App() {
                         <Route path="/tarif" element={<Tarifs />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
                         <Route path="/protected-resource" element={<ProtectedResource />} />
                     </Routes>
                 </ContentWrapper>
