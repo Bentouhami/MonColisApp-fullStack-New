@@ -39,8 +39,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserLoginRequest userLoginRequest) {
-        ResponseEntity<Map<String, Object>> response = iAuthService.login(userLoginRequest.getEmail(), userLoginRequest.getPassword());
-        return response;
+        return iAuthService.login(userLoginRequest.getEmail(), userLoginRequest.getPassword());
     }
 
 

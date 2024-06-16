@@ -1,18 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import Swal from "sweetalert2";
-import axios from "../config/axiosConfig";
-// Components
+import axios from "../config/axiosConfig"; // Utiliser la configuration Axios
 import FullButton from "../components/Buttons/FullButton";
-// Assets
 import HeaderImage from "../assets/img/welcome.svg";
-import {redirect} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Acceuil() {
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
-            // Step 1: Request email from the user
             const { value: email } = await Swal.fire({
                 title: "Input email address",
                 input: "email",
@@ -21,11 +19,9 @@ export default function Acceuil() {
             });
 
             if (email) {
-                // Step 2: Send email to API to check if it exists
                 const emailCheckResponse = await axios.post("/users/auth/check-email", { email: email });
 
                 if (emailCheckResponse.data.exists) {
-                    // Step 3: Request password from the user if email exists
                     const { value: password } = await Swal.fire({
                         title: "Enter your password",
                         input: "password",
@@ -39,16 +35,15 @@ export default function Acceuil() {
                     });
 
                     if (password) {
-                        // Step 4: Send email and password to API to verify credentials
                         const loginResponse = await axios.post("/users/auth/login", { email, password });
 
                         if (loginResponse.data.success) {
-                            // Step 5: Open a session for the user if credentials are correct
+                            // Set the token in local storage for the next request to the server to authenticate the user
+                            localStorage.setItem('token', loginResponse.data.token);
+
                             Swal.fire(`Welcome back, ${email}`).then(r => {
                                 if (r.value) {
-                                    // Here you can redirect the user or perform other actions upon successful login
-                                    // redirect user to /simulation
-                                    redirect("/simulation");
+                                    navigate("/simulation");
                                 }
                             });
                         } else {
@@ -77,15 +72,13 @@ export default function Acceuil() {
                         le meilleur mode de livraison pour votre colis.
                     </HeaderP>
                     <BtnWrapper>
-                        <FullButton title="Connexion" action={handleLogin}/>
+                        <FullButton title="Connexion" action={handleLogin} />
                     </BtnWrapper>
                 </div>
             </LeftSide>
             <RightSide>
                 <ImageWrapper>
-                    <Img className="radius8"
-                         src={HeaderImage}
-                         alt="office" style={{zIndex: 9}}/>
+                    <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
                 </ImageWrapper>
             </RightSide>
         </Wrapper>

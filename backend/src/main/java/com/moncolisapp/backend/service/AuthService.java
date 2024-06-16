@@ -6,10 +6,10 @@ import com.moncolisapp.backend.dto.AddressDTO;
 import com.moncolisapp.backend.dto.ClientDTO;
 import com.moncolisapp.backend.entities.Address;
 import com.moncolisapp.backend.entities.Client;
-import com.moncolisapp.backend.mapper.AddressMapper;
 import com.moncolisapp.backend.mapper.ClientMapper;
 import com.moncolisapp.backend.repository.AddressRepository;
 import com.moncolisapp.backend.repository.ClientRepository;
+import com.moncolisapp.backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +32,13 @@ public class AuthService implements IAuthService {
     private ClientRepository clientRepository;
 
     @Autowired
-    private AddressMapper addressMapper;
-    @Autowired
     private ClientMapper clientMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
     /*endregion*/
@@ -135,6 +135,8 @@ public class AuthService implements IAuthService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
+        String jwt = jwtUtil.generateToken(email);
+
         UserLoginResponse loginResponse = new UserLoginResponse(
                 client.getNom(),
                 client.getPrenom(),
@@ -151,51 +153,9 @@ public class AuthService implements IAuthService {
 
         response.put("success", true);
         response.put("data", loginResponse);
+        response.put("token", jwt);
         return ResponseEntity.ok(response);
     }
-//    public ResponseEntity<String> login(String email, String password) {
-//
-//        boolean existsUser = existsClientByEmail(email);
-//        if (!existsUser) {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//        Client client = findClientByEmail(email);
-//
-//
-//        if (client == null) {
-//            return ResponseEntity.badRequest().body("Client not found");
-//        }
-//        Integer addressId = getAddressIdByClientID(client.getId());
-//
-//        Optional<Address> address = addressRepository.findById(addressId);
-//        AddressDTO addressDTO = addressMapper.toDto(address.get());
-//        client.setIdAddress(addressMapper.partialUpdate(addressDTO, client.getIdAddress()));
-//
-//
-//        // create a UserLoginResponse object
-//        UserLoginResponse loginResponse = new UserLoginResponse();
-//
-//        // get the password of the user in the database
-//        String mot_de_passe = client.getMotDePasse();
-//
-//        // if the password is the same as the password in the database
-//        if (password.equals(mot_de_passe)) {
-//            // create a new UserLoginResponse object
-//
-//                    loginResponse.setNom(client.getNom());
-//                    loginResponse.setPrenom(client.getPrenom());
-//                    loginResponse.setDateDeNaissance(client.getDateDeNaissance().toString());
-//                    loginResponse.setSexe(getSexe(client.getSexe()));
-//                    loginResponse.setTelephone(client.getTelephone());
-//                    loginResponse.setEmail(client.getEmail());
-//                    loginResponse.setRue(addressDTO.rue());
-//                    loginResponse.setNumero(addressDTO.numero());
-//                    loginResponse.setVille(addressDTO.ville());
-//                    loginResponse.setCodepostal(addressDTO.codepostal());
-//                    loginResponse.setPays(addressDTO.pays());
-//        }
-//        return ResponseEntity.ok(loginResponse.toString());
-//    }
 
     private Integer getAddressIdByClientID(Integer id) {
         return clientRepository.findAddressIdByClientID(id);
