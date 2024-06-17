@@ -112,17 +112,31 @@ export default function Simulation() {
             let valid = true;
 
             parcels.forEach(parcel => {
+                // TODO: Ajouter les tests de validation des dimensions des colis et le volume total
+                // calculer le volume total de la colis en kg
                 const volume = parcel.height * parcel.width * parcel.length;
+
+                // calculer la dimension maximale de la colis en cm
                 const totalDimensions = parcel.height + parcel.width + parcel.length;
+
+                // calculer la dimension maximale de la colis en cm
                 const maxDimension = Math.max(parcel.height, parcel.width, parcel.length);
 
+                // vérifier si les dimensions des colis sont correctes et le volume total est suffisant
                 if (totalDimensions > 150 || maxDimension > 120 || volume < 3375) {
+
                     valid = false;
                 }
             });
 
             if (valid) {
                 // Ajoutez votre logique d'envoi ici
+                // la logique ici est de récupérer les prix des colis par rapport à leurs poids (volume)
+                // et de calculer le prix total de l'envoi en fonction des colis et des poids (volume)
+                // et afficher un récapitulatif de l'envoi sur la page de simulation
+                // (ex: Envoi de 3 colis de 100 kg par 10 kg = 300 kg de colis par jour)
+                // et afficher le prix total de l'envoi (ex: 300 kg de colis par jour = 300 kg * prix par kg = 300 * 10 = 3000 euros)
+
                 console.log("Simulation validée:", values);
             } else {
                 console.error("Les dimensions des colis ne respectent pas les contraintes.");
