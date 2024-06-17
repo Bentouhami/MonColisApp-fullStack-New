@@ -4,10 +4,7 @@ import com.moncolisapp.backend.dto.AddressDTO;
 import com.moncolisapp.backend.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,11 +30,16 @@ public class AddressController {
      * Get all addresses in the database for a specific country
      * @return List of AddressDTO objects
      */
-    @GetMapping("/{pays}")
-    public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable String pays) {
-        return addressService.getAddress(pays);
+    @GetMapping("/pays")
+    public ResponseEntity<List<String>> getCounties() {
+         return ResponseEntity.ok(addressService.getAllPays().getBody());
     }
 
+
+    @GetMapping("/{pays}/villes")
+    public ResponseEntity<List<String>> getCitiesByCountry(@PathVariable String pays) {
+        return ResponseEntity.ok(addressService.getCitiesByCountry(pays).getBody());
+    }
 
 
 }

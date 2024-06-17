@@ -16,7 +16,11 @@ public class AddressService {
     private AddressRepository addressRepository;
 
 
-
+    /**
+     * Get all addresses in the database
+     *
+     * @return List of AddressDTO objects
+     */
     public ResponseEntity<List<AddressDTO>> getAllAddress() {
 
         List<Address> addressList = addressRepository.findAll();
@@ -24,19 +28,39 @@ public class AddressService {
     }
 
     /**
-     * Get all addresses in the database for a specific country
-     * @param pays String country name
-     * @return List of AddressDTO objects
+     * Get all pays in the database
+     *
+     * @return List of pays in the database
      */
-    public ResponseEntity<List<AddressDTO>> getAddress(String pays) {
-        List<Address> addressList = addressRepository.findByPays(pays);
-        return getListResponseEntity(addressList);
+    public ResponseEntity<List<String>> getAllPays() {
+        List<String> paysList = addressRepository.findAllPays();
 
+//        List<String> paysListString = new ArrayList<>();
+//        for (Address address : paysList) {
+//            paysListString.add(address.getPays());
+//        }
+        return ResponseEntity.ok(paysList);
+
+    }
+
+    public ResponseEntity<List<String>> getCitiesByCountry(String pays) {
+
+        List<String> villesList = addressRepository.findDistinctByVille(pays);
+//
+//        List<String> paysListString = new ArrayList<>();
+//        for (Address address : villesList) {
+//            if (address.getPays().equals(pays)) {
+//                paysListString.add(address.getVille());
+//            }
+//
+//        }
+        return ResponseEntity.ok(villesList);
     }
 
 
     /**
      * Get all addresses in the database for a specific country
+     *
      * @param addressList List of Address objects
      * @return List of AddressDTO objects
      */
