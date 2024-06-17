@@ -33,27 +33,14 @@ public class AddressService {
      * @return List of pays in the database
      */
     public ResponseEntity<List<String>> getAllPays() {
-        List<String> paysList = addressRepository.findAllPays();
-
-//        List<String> paysListString = new ArrayList<>();
-//        for (Address address : paysList) {
-//            paysListString.add(address.getPays());
-//        }
+        List<String> paysList = addressRepository.findAllPaysWithAgences();
         return ResponseEntity.ok(paysList);
 
     }
 
     public ResponseEntity<List<String>> getCitiesByCountry(String pays) {
 
-        List<String> villesList = addressRepository.findDistinctByVille(pays);
-//
-//        List<String> paysListString = new ArrayList<>();
-//        for (Address address : villesList) {
-//            if (address.getPays().equals(pays)) {
-//                paysListString.add(address.getVille());
-//            }
-//
-//        }
+        List<String> villesList = addressRepository.findCitiesWithAgencesByCountry(pays);
         return ResponseEntity.ok(villesList);
     }
 

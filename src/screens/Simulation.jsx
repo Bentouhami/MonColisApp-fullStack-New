@@ -6,33 +6,84 @@ import axios from "../config/axiosConfig";
 
 export default function Simulation() {
     const [countries, setCountries] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [selectedCountry, setSelectedCountry] = useState("");
+    const [residenceCities, setResidenceCities] = useState([]);
+    const [destinationCities, setDestinationCities] = useState([]);
+    const [residenceAgencies, setResidenceAgencies] = useState([]);
+    const [destinationAgencies, setDestinationAgencies] = useState([]);
+    const [selectedResidenceCountry, setSelectedResidenceCountry] = useState("");
+    const [selectedResidenceCity, setSelectedResidenceCity] = useState("");
+    const [selectedDestinationCountry, setSelectedDestinationCountry] = useState("");
+    const [selectedDestinationCity, setSelectedDestinationCity] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 1;
 
     useEffect(() => {
-        axios.get('/countries')
+        axios.get('/addresses/pays')
             .then(response => setCountries(response.data))
             .catch(error => console.error('Erreur lors de la récupération des pays:', error));
     }, []);
 
     useEffect(() => {
-        if (selectedCountry) {
-            axios.get(`/cities?country=${selectedCountry}`)
-                .then(response => setCities(response.data))
+        if (selectedResidenceCountry) {
+            axios.get(`/addresses/${selectedResidenceCountry}/villes`)
+                .then(response => setResidenceCities(response.data))
                 .catch(error => console.error('Erreur lors de la récupération des villes:', error));
         }
-    }, [selectedCountry]);
+    }, [selectedResidenceCountry]);
 
-    const handleCountryChange = (e) => {
-        setSelectedCountry(e.target.value);
-        formik.setFieldValue("city", "");
+    useEffect(() => {
+        if (selectedResidenceCity) {
+            axios.get(`/agences/${selectedResidenceCity}`)
+                .then(response => setResidenceAgencies(response.data))
+                .catch(error => console.error('Erreur lors de la récupération des agences:', error));
+        }
+    }, [selectedResidenceCity]);
+
+    useEffect(() => {
+        if (selectedDestinationCountry) {
+            axios.get(`/addresses/${selectedDestinationCountry}/villes`)
+                .then(response => setDestinationCities(response.data))
+                .catch(error => console.error('Erreur lors de la récupération des villes:', error));
+        }
+    }, [selectedDestinationCountry]);
+
+    useEffect(() => {
+        if (selectedDestinationCity) {
+            axios.get(`/agences/${selectedDestinationCity}`)
+                .then(response => setDestinationAgencies(response.data))
+                .catch(error => console.error('Erreur lors de la récupération des agences:', error));
+        }
+    }, [selectedDestinationCity]);
+
+    const handleResidenceCountryChange = (e) => {
+        setSelectedResidenceCountry(e.target.value);
+        formik.setFieldValue("residenceCity", "");
+        formik.setFieldValue("residenceAgency", "");
+    };
+
+    const handleResidenceCityChange = (e) => {
+        setSelectedResidenceCity(e.target.value);
+        formik.setFieldValue("residenceAgency", "");
+    };
+
+    const handleDestinationCountryChange = (e) => {
+        setSelectedDestinationCountry(e.target.value);
+        formik.setFieldValue("destinationCity", "");
+        formik.setFieldValue("destinationAgency", "");
+    };
+
+    const handleDestinationCityChange = (e) => {
+        setSelectedDestinationCity(e.target.value);
+        formik.setFieldValue("destinationAgency", "");
     };
 
     const validationSchema = Yup.object().shape({
-        country: Yup.string().required("Le pays est requis"),
-        city: Yup.string().required("La ville est requise"),
+        residenceCountry: Yup.string().required("Le pays de résidence est requis"),
+        residenceCity: Yup.string().required("La ville de résidence est requise"),
+        residenceAgency: Yup.string().required("L'agence de départ est requise"),
+        destinationCountry: Yup.string().required("Le pays de destination est requis"),
+        destinationCity: Yup.string().required("La ville de destination est requise"),
+        destinationAgency: Yup.string().required("L'agence d'arrivée est requise"),
         numberOfParcels: Yup.number().required("Le nombre de colis est requis").min(1, "Minimum 1 colis").max(5, "Maximum 5 colis"),
         parcels: Yup.array().of(
             Yup.object().shape({
@@ -46,8 +97,12 @@ export default function Simulation() {
 
     const formik = useFormik({
         initialValues: {
-            country: "",
-            city: "",
+            residenceCountry: "",
+            residenceCity: "",
+            residenceAgency: "",
+            destinationCountry: "",
+            destinationCity: "",
+            destinationAgency: "",
             numberOfParcels: 1,
             parcels: [{ height: "", width: "", length: "", weight: "" }]
         },
@@ -107,86 +162,147 @@ export default function Simulation() {
                     <FormWrapper>
                         <form onSubmit={formik.handleSubmit}>
                             <FormField>
-                                <label>Pays</label>
+                                <label>Pays de résidence</label>
                                 <select
-                                    name="country"
-                                    value={formik.values.country}
+                                    name="residenceCountry"
+                                    value={formik.values.residenceCountry}
                                     onChange={(e) => {
-                                        handleCountryChange(e);
+                                        handleResidenceCountryChange(e);
                                         formik.handleChange(e);
                                     }}
                                     onBlur={formik.handleBlur}
                                 >
                                     <option value="">Sélectionnez un pays</option>
                                     {countries.map(country => (
-                                        <option key={country.code} value={country.code}>{country.name}</option>
+                                        <option key={country} value={country}>{country}</option>
                                     ))}
                                 </select>
-                                {formik.touched.country && formik.errors.country && (
-                                    <ErrorMessage>{formik.errors.country}</ErrorMessage>
+                                {formik.touched.residenceCountry && formik.errors.residenceCountry && (
+                                    <ErrorMessage>{formik.errors.residenceCountry}</ErrorMessage>
                                 )}
                             </FormField>
                             <FormField>
-                                <label>Ville</label>
+                                <label>Ville de résidence</label>
                                 <select
-                                    name="city"
-                                    value={formik.values.city}
-                                    onChange={formik.handleChange}
+                                    name="residenceCity"
+                                    value={formik.values.residenceCity}
+                                    onChange={(e) => {
+                                        handleResidenceCityChange(e);
+                                        formik.handleChange(e);
+                                    }}
                                     onBlur={formik.handleBlur}
-                                    disabled={!selectedCountry}
+                                    disabled={!selectedResidenceCountry}
                                 >
                                     <option value="">Sélectionnez une ville</option>
-                                    {cities.map(city => (
-                                        <option key={city.code} value={city.code}>{city.name}</option>
+                                    {residenceCities.map(city => (
+                                        <option key={city} value={city}>{city}</option>
                                     ))}
                                 </select>
-                                {formik.touched.city && formik.errors.city && (
-                                    <ErrorMessage>{formik.errors.city}</ErrorMessage>
+                                {formik.touched.residenceCity && formik.errors.residenceCity && (
+                                    <ErrorMessage>{formik.errors.residenceCity}</ErrorMessage>
                                 )}
                             </FormField>
                             <FormField>
-                                {/*<label>Nombre de colis</label>*/}
-                                {/*<input*/}
-                                {/*    type="number"*/}
-                                {/*    name="numberOfParcels"*/}
-                                {/*    value={formik.values.numberOfParcels}*/}
-                                {/*    onChange={(e) => {*/}
-                                {/*        handleNumberOfParcelsChange(e);*/}
-                                {/*        formik.handleChange(e);*/}
-                                {/*    }}*/}
-                                {/*    onBlur={formik.handleBlur}*/}
-                                {/*    min="1"*/}
-                                {/*    max="5"*/}
-                                {/*/>*/}
-                                {/*{formik.touched.numberOfParcels && formik.errors.numberOfParcels && (*/}
-                                {/*    <ErrorMessage>{formik.errors.numberOfParcels}</ErrorMessage>*/}
-                                {/*)}*/}
+                                <label>Agence de départ</label>
+                                <select
+                                    name="residenceAgency"
+                                    value={formik.values.residenceAgency}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    disabled={!selectedResidenceCity}
+                                >
+                                    <option value="">Sélectionnez une agence</option>
+                                    {residenceAgencies.map(agency => (
+                                        <option key={agency} value={agency}>{agency}</option>
+                                    ))}
+                                </select>
+                                {formik.touched.residenceAgency && formik.errors.residenceAgency && (
+                                    <ErrorMessage>{formik.errors.residenceAgency}</ErrorMessage>
+                                )}
+                            </FormField>
+                            <FormField>
+                                <label>Pays de destination</label>
+                                <select
+                                    name="destinationCountry"
+                                    value={formik.values.destinationCountry}
+                                    onChange={(e) => {
+                                        handleDestinationCountryChange(e);
+                                        formik.handleChange(e);
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <option value="">Sélectionnez un pays</option>
+                                    {countries.map(country => (
+                                        <option key={country} value={country}>{country}</option>
+                                    ))}
+                                </select>
+                                {formik.touched.destinationCountry && formik.errors.destinationCountry && (
+                                    <ErrorMessage>{formik.errors.destinationCountry}</ErrorMessage>
+                                )}
+                            </FormField>
+                            <FormField>
+                                <label>Ville de destination</label>
+                                <select
+                                    name="destinationCity"
+                                    value={formik.values.destinationCity}
+                                    onChange={(e) => {
+                                        handleDestinationCityChange(e);
+                                        formik.handleChange(e);
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                    disabled={!selectedDestinationCountry}
+                                >
+                                    <option value="">Sélectionnez une ville</option>
+                                    {destinationCities.map(city => (
+                                        <option key={city} value={city}>{city}</option>
+                                    ))}
+                                </select>
+                                {formik.touched.destinationCity && formik.errors.destinationCity && (
+                                    <ErrorMessage>{formik.errors.destinationCity}</ErrorMessage>
+                                )}
+                            </FormField>
+                            <FormField>
+                                <label>Agence d'arrivée</label>
+                                <select
+                                    name="destinationAgency"
+                                    value={formik.values.destinationAgency}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    disabled={!selectedDestinationCity}
+                                >
+                                    <option value="">Sélectionnez une agence</option>
+                                    {destinationAgencies.map(agency => (
+                                        <option key={agency} value={agency}>{agency}</option>
+                                    ))}
+                                </select>
+                                {formik.touched.destinationAgency && formik.errors.destinationAgency && (
+                                    <ErrorMessage>{formik.errors.destinationAgency}</ErrorMessage>
+                                )}
+                            </FormField>
+                            <FormField>
+                                <label>Nombre de colis</label>
+                                <input
+                                    type="number"
+                                    name="numberOfParcels"
+                                    value={formik.values.numberOfParcels}
+                                    onChange={(e) => {
+                                        handleNumberOfParcelsChange(e);
+                                        formik.handleChange(e);
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                    min="1"
+                                    max="5"
+                                />
+                                {formik.touched.numberOfParcels && formik.errors.numberOfParcels && (
+                                    <ErrorMessage>{formik.errors.numberOfParcels}</ErrorMessage>
+                                )}
                             </FormField>
                             <FormikProvider value={formik}>
-
                                 <FieldArray name="parcels">
-
                                     {() => (
                                         <>
                                             {currentParcels.map((_, index) => (
                                                 <ParcelForm key={index}>
-                                                    {/* nombre des colis */}
-                                                    <label className="font24 bold m-5 p-2" htmlFor="p-5">Nombre de colis </label>
-                                                    <input
-                                                        type="number"
-                                                        name="numberOfParcels"
-                                                        value={formik.values.numberOfParcels}
-                                                        onChange={(e) => {
-                                                            handleNumberOfParcelsChange(e);
-                                                            formik.handleChange(e);
-                                                        }}
-                                                        onBlur={formik.handleBlur}
-                                                        min="1"
-                                                        max="5"
-                                                    />
-                                                    {formik.touched.numberOfParcels && formik.errors.numberOfParcels && (
-                                                        <ErrorMessage>{formik.errors.numberOfParcels}</ErrorMessage>
-                                                    )}
                                                     <h3>Colis {currentPage * itemsPerPage + index + 1}</h3>
                                                     <FormField>
                                                         <label>Hauteur (cm)</label>
@@ -253,16 +369,16 @@ export default function Simulation() {
                             <div className="button-container">
                                 {currentPage > 0 && (
                                     <button type="button" className="button-3d" onClick={() => setCurrentPage(currentPage - 1)}>
-                                        <div className="button-top">Précédent</div>
-                                        <div className="button-bottom"></div>
-                                        <div className="button-base"></div>
+                                        <span className="button-top">Précédent</span>
+                                        <span className="button-bottom"></span>
+                                        <span className="button-base"></span>
                                     </button>
                                 )}
                                 {(currentPage + 1) * itemsPerPage < formik.values.parcels.length && (
                                     <button type="button" className="button-3d" onClick={() => setCurrentPage(currentPage + 1)}>
-                                        <div className="button-top">Suivant</div>
-                                        <div className="button-bottom"></div>
-                                        <div className="button-base"></div>
+                                        <span className="button-top">Suivant</span>
+                                        <span className="button-bottom"></span>
+                                        <span className="button-base"></span>
                                     </button>
                                 )}
                             </div>
