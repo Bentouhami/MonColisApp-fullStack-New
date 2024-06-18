@@ -1,11 +1,13 @@
 package com.moncolisapp.backend.service;
 
-import com.moncolisapp.backend.repository.TransportRepository;
 import com.moncolisapp.backend.entities.Transport;
+import com.moncolisapp.backend.repository.TransportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 
 @Service
 public class TransportService {
@@ -14,29 +16,33 @@ public class TransportService {
     private TransportRepository transportRepository;
 
     public boolean checkTransportAvailability(BigDecimal poidsTotal, BigDecimal volumeTotal) {
-        //  nous n'avons qu'un seul moyen de transport pour le moment
+        // Assumons qu'il n'y a qu'un seul transport
         Transport transport = transportRepository.findById(1).orElseThrow(() -> new RuntimeException("Transport not found"));
 
-        BigDecimal newPoids = transport.getPoidsActuel().add(poidsTotal);
-        BigDecimal newVolume = transport.getVolumeActuel().add(volumeTotal);
+        BigDecimal poidsDisponible = transport.getPoidsDeBase().subtract(transport.getPoidsActuel().add(poidsTotal));
+        BigDecimal volumeDisponible = transport.getVolumeDeBase().subtract(transport.getVolumeActuel().add(volumeTotal));
 
-        // Vérifier si le nouveau poids et volume sont dans les limites
-        if (newPoids.compareTo(transport.getPoidsDeBase()) <= 0 && newVolume.compareTo(transport.getVolumeDeBase()) <= 0) {
-            return true;
-        } else {
-            return false;
+        return poidsDisponible.compareTo(BigDecimal.ZERO) >= 0 && volumeDisponible.compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+    public LocalDate calculateNextAvailableDate() {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate nextTuesday = getNextTuesday(currentDate);
+        return nextTuesday.plusWeeks(2); // Date du prochain envoi après deux semaines
+    }
+
+    private LocalDate getNextTuesday(LocalDate currentDate) {
+        while (currentDate.getDayOfWeek() != DayOfWeek.TUESDAY) {
+            currentDate = currentDate.plusDays(1);
         }
+        return currentDate;
     }
 
     public void updateTransport(BigDecimal poidsTotal, BigDecimal volumeTotal) {
-        // Supposons que nous n'ayons qu'un seul moyen de transport pour le moment
         Transport transport = transportRepository.findById(1).orElseThrow(() -> new RuntimeException("Transport not found"));
 
         transport.setPoidsActuel(transport.getPoidsActuel().add(poidsTotal));
         transport.setVolumeActuel(transport.getVolumeActuel().add(volumeTotal));
-
-        // Mettre à jour la disponibilité
-        transport.setEstDisponible(transport.getPoidsActuel().compareTo(transport.getPoidsDeBase()) < 0 && transport.getVolumeActuel().compareTo(transport.getVolumeDeBase()) < 0);
 
         transportRepository.save(transport);
     }

@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/api/v1/colis/calculate-price",
                                 "/api/v1/simulation/calculate-price",
                                 "/api/v1/simulation/calculate",
-                                "/api/v1/envois/valider").permitAll()
+                                "/api/v1/envois/valider",
+                                "/api/v1/transports/verify-space").permitAll()
                         .requestMatchers("/api/v1/protected/**").authenticated()
                         .anyRequest().authenticated()
                 )

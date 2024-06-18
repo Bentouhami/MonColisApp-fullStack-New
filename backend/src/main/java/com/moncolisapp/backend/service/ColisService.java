@@ -31,7 +31,7 @@ public class ColisService {
                     colisDTO.getPoidsColis().compareTo(BigDecimal.valueOf(70)) <= 0 &&
                     colisDTO.getPoidsColis().compareTo(BigDecimal.valueOf(1)) >= 0) {
                 colisDTO.setVolumeColis(volume);
-                validatedColis.add(colisDTO);
+//                validatedColis.add(colisDTO);
             }
         }
 
