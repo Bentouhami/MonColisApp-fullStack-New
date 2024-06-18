@@ -21,11 +21,15 @@ public class ColisService {
         List<ColisDTO> validatedColis = new ArrayList<>();
 
         for (ColisDTO colisDTO : colisDTOList) {
-            double volume = colisDTO.getHauteur() * colisDTO.getLargeur() * colisDTO.getLongueur();
-            double totalDimensions = colisDTO.getHauteur() + colisDTO.getLargeur() + colisDTO.getLongueur();
-            double maxDimension = Math.max(colisDTO.getHauteur(), Math.max(colisDTO.getLargeur(), colisDTO.getLongueur()));
+            BigDecimal volume = colisDTO.getHauteur().multiply(colisDTO.getLargeur()).multiply(colisDTO.getLongueur());
+            BigDecimal totalDimensions = colisDTO.getHauteur().add(colisDTO.getLargeur()).add(colisDTO.getLongueur());
+            BigDecimal maxDimension = colisDTO.getHauteur().max(colisDTO.getLargeur().max(colisDTO.getLongueur()));
 
-            if (totalDimensions <= 360 && maxDimension <= 120 && volume >= 1728 && colisDTO.getPoidsColis() <= 70 && colisDTO.getPoidsColis() >= 1) {
+            if (totalDimensions.compareTo(BigDecimal.valueOf(360)) <= 0 &&
+                    maxDimension.compareTo(BigDecimal.valueOf(120)) <= 0 &&
+                    volume.compareTo(BigDecimal.valueOf(1728)) >= 0 &&
+                    colisDTO.getPoidsColis().compareTo(BigDecimal.valueOf(70)) <= 0 &&
+                    colisDTO.getPoidsColis().compareTo(BigDecimal.valueOf(1)) >= 0) {
                 colisDTO.setVolumeColis(volume);
                 validatedColis.add(colisDTO);
             }
@@ -35,38 +39,19 @@ public class ColisService {
     }
 
     public double calculatePrixTotal(List<ColisDTO> colisDTOList) {
-        double poidsTotal = colisDTOList.stream().mapToDouble(ColisDTO::getPoidsColis).sum();
+        BigDecimal poidsTotal = colisDTOList.stream()
+                .map(ColisDTO::getPoidsColis)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Optional<Tarif> tarifFixeOpt = tarifRepository.findByPoidsMaxAndPrixFixeIsNotNull(BigDecimal.valueOf(10.0));
         Optional<Tarif> tarifVariableOpt = tarifRepository.findByPoidsMaxIsNullAndPrixParKiloIsNotNull();
 
-        if (poidsTotal <= 10 && tarifFixeOpt.isPresent()) {
+        if (poidsTotal.compareTo(BigDecimal.valueOf(10)) <= 0 && tarifFixeOpt.isPresent()) {
             return tarifFixeOpt.get().getPrixFixe().doubleValue();
-        } else if (poidsTotal > 10 && tarifVariableOpt.isPresent()) {
-            return poidsTotal * tarifVariableOpt.get().getPrixParKilo().doubleValue();
+        } else if (poidsTotal.compareTo(BigDecimal.valueOf(10)) > 0 && tarifVariableOpt.isPresent()) {
+            return poidsTotal.multiply(tarifVariableOpt.get().getPrixParKilo()).doubleValue();
         }
 
         return 0.0; // Default to 0 if no matching tariff is found
     }
-
-//
-//    public double calculateTotalPrice(List<ColisDTO> colisDTOList) {
-//        double totalWeight = 0;
-//        for (ColisDTO colis : colisDTOList) {
-//            totalWeight += colis.getPoidsColis();
-//        }
-//
-//        // Fetch tariff details from the database
-//        double fixedPrice = tarifsRepository.findByPoidsMaxAndPrixFixeIsNotNull(BigDecimal.valueOf(10.0)).get().getPrixFixe().doubleValue();
-//        double pricePerKg = 1.60;
-//        double totalPrice;
-//
-//        if (totalWeight <= 10) {
-//            totalPrice = fixedPrice;
-//        } else {
-//            totalPrice = totalWeight * pricePerKg;
-//        }
-//
-//        return totalPrice;
-//    }
 }

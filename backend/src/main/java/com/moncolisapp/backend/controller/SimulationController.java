@@ -16,7 +16,9 @@ public class SimulationController {
 
     @PostMapping("/calculate")
     public ResponseEntity<SimulationResponse> calculateSimulation(@RequestBody SimulationRequest request) {
+        System.out.println("Received SimulationRequest: " + request);
         SimulationResponse response = simulationService.calculateSimulation(request);
         return ResponseEntity.ok(response);
     }
+
 }

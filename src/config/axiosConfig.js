@@ -1,3 +1,4 @@
+// src/config/axiosConfig.js
 import axios from 'axios';
 
 const instance = axios.create({
@@ -8,7 +9,6 @@ const instance = axios.create({
     },
 });
 
-// use this to set the token in local storage for the next request to the server
 instance.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
@@ -21,5 +21,10 @@ instance.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+export const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    return !!token; // Retourne true si un token est présent, false sinon
+};
 
 export default instance;

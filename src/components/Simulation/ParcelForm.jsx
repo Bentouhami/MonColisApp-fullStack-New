@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, ErrorMessage } from './CommonStyles';
 
@@ -10,7 +11,7 @@ const ParcelForm = ({ index, values, handleChange, handleBlur, touched, errors }
                 <input
                     type="number"
                     name={`parcels[${index}].height`}
-                    value={values?.height || ''}
+                    value={values.height || ''}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     step="0.01"
@@ -24,7 +25,7 @@ const ParcelForm = ({ index, values, handleChange, handleBlur, touched, errors }
                 <input
                     type="number"
                     name={`parcels[${index}].width`}
-                    value={values?.width || ''}
+                    value={values.width || ''}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     step="0.01"
@@ -38,7 +39,7 @@ const ParcelForm = ({ index, values, handleChange, handleBlur, touched, errors }
                 <input
                     type="number"
                     name={`parcels[${index}].length`}
-                    value={values?.length || ''}
+                    value={values.length || ''}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     step="0.01"
@@ -52,7 +53,7 @@ const ParcelForm = ({ index, values, handleChange, handleBlur, touched, errors }
                 <input
                     type="number"
                     name={`parcels[${index}].weight`}
-                    value={values?.weight || ''}
+                    value={values.weight || ''}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     step="0.01"

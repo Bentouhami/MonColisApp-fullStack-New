@@ -1,22 +1,22 @@
-// src/screens/Login.jsx
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import axios from "../config/axiosConfig"; // Importer votre configuration Axios
+import axios from "../config/axiosConfig";
 import LoginImg from "../assets/img/loging.svg";
-import { AuthContext } from "../components/Elements/AuthContext"; // Importer le contexte d'authentification
+import { AuthContext } from "../components/Elements/AuthContext";
 
-// Définir le schéma de validation avec Yup
 const validationSchema = Yup.object({
-    email: Yup.string().email("Email invalide").required("L'email est requis"),
-    password: Yup.string().min(6, "Le mot de passe doit contenir au moins 6 caractères").required("Le mot de passe est requis"),
+    email: Yup.string().email("Email invalide")
+        .required("L'email est requis"),
+    password: Yup.string().min(6, "Le mot de passe doit contenir au moins 6 caractères")
+        .required("Le mot de passe est requis"),
 });
 
 export default function Login() {
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useContext(AuthContext); // Utiliser le contexte d'authentification
+    const { setIsAuthenticated } = useContext(AuthContext);
 
     const formik = useFormik({
         initialValues: {
@@ -32,17 +32,20 @@ export default function Login() {
                 });
 
                 if (response.data.success) {
-                    // Set the token in local storage for the next request to the server to authenticate the user
                     localStorage.setItem('token', response.data.token);
-                    setIsAuthenticated(true); // Mettre à jour l'état d'authentification
-                    navigate("/simulation");
+                    setIsAuthenticated(true);
+                    // Check if there are simulation data in localStorage
+                    const simulationData = JSON.parse(localStorage.getItem('simulationData'));
+                    if (simulationData) {
+                        navigate('/recapitulatif', { state: { simulationData } });
+                    } else {
+                        navigate("/simulation");
+                    }
                 } else {
-                    // Handle login failure
                     alert("Invalid email or password");
                 }
             } catch (error) {
                 console.error("There was an error!", error);
-                // Handle error
             }
         },
     });
@@ -54,10 +57,10 @@ export default function Login() {
                     <HeaderInfo>
                         <h1 className="mt-5 font40 extraBold">Se Connecter</h1>
                         <p className="font13">
-                            Veuillez remplir le formulaire ci-dessous pour te connecter.
+                            Veuillez remplir le formulaire ci-dessous pour vous connecter.
                         </p>
                     </HeaderInfo>
-                    <div className="row" style={{paddingBottom: "30px"}}>
+                    <div className="row" style={{ paddingBottom: "30px" }}>
                         <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <Form onSubmit={formik.handleSubmit}>
                                 <Section>
@@ -96,15 +99,15 @@ export default function Login() {
                                     </div>
                                 </Section>
                             </Form>
-                                <SumbitWrapper className="flex">
-                                    <ButtonInput
-                                        onClick={formik.handleSubmit}
-                                        type="submit"
-                                        value="Se connecter"
-                                        className="mb-3 pointer animate radius8"
-                                        style={{ maxWidth: "220px" }}
-                                    />
-                                </SumbitWrapper>
+                            <SumbitWrapper className="flex">
+                                <ButtonInput
+                                    onClick={formik.handleSubmit}
+                                    type="submit"
+                                    value="Se connecter"
+                                    className="mb-3 pointer animate radius8"
+                                    style={{ maxWidth: "220px" }}
+                                />
+                            </SumbitWrapper>
                         </div>
                         <RightSide>
                             <ImageWrapper>

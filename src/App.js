@@ -12,6 +12,7 @@ import Footer from "./screens/Footer.jsx";
 import Acceuil from "./screens/Acceuil";
 import Login from "./screens/Login";
 import ProtectedResource from "./screens/ProtectedResource";
+import Recapitulatif from "./components/Simulation/Recapitulatif";
 
 export default function App() {
     return (
@@ -27,6 +28,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Acceuil />} />
                     <Route path="/simulation" element={<Simulation />} />
+                    <Route path="/recapitulatif" element={<Recapitulatif />} />
                     <Route path="/tarif" element={<Tarifs />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/register" element={<Register />} />

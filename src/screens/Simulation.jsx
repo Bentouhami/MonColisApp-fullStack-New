@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import 'bootstrap/dist/css/bootstrap.css';
-import { useFormik, FieldArray, FormikProvider } from "formik";
+import {FieldArray, FormikProvider, useFormik} from "formik";
 import * as Yup from "yup";
 import axios from "../config/axiosConfig";
 import Swal from 'sweetalert2';
@@ -8,7 +8,15 @@ import CountrySelect from "../components/Simulation/CountrySelect";
 import CitySelect from "../components/Simulation/CitySelect";
 import AgencySelect from "../components/Simulation/AgencySelect";
 import ParcelForm from "../components/Simulation/ParcelForm";
-import { Wrapper, HeaderInfo, FormWrapper, SubmitButton, FormField, ErrorMessage } from "../components/Simulation/CommonStyles";
+import {
+    ErrorMessage,
+    FormField,
+    FormWrapper,
+    HeaderInfo,
+    SubmitButton,
+    Wrapper
+} from "../components/Simulation/CommonStyles";
+import {useNavigate} from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
     residenceCountry: Yup.string().required("Le pays de résidence est requis"),
@@ -40,18 +48,28 @@ export default function Simulation() {
     const [selectedDestinationCity, setSelectedDestinationCity] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 1;
+    const navigate = useNavigate(); // Initialize useNavigate
+
 
     useEffect(() => {
         axios.get('/addresses/pays')
             .then(response => setCountries(response.data))
-            .catch(error => Swal.fire({ icon: "error", title: "Erreur", text: "Erreur lors de la récupération des pays." }));
+            .catch(error => Swal.fire({
+                icon: "error",
+                title: "Erreur",
+                text: "Erreur lors de la récupération des pays."
+            }));
     }, []);
 
     useEffect(() => {
         if (selectedResidenceCountry) {
             axios.get(`/addresses/${selectedResidenceCountry}/villes`)
                 .then(response => setResidenceCities(response.data))
-                .catch(error => Swal.fire({ icon: "error", title: "Erreur", text: "Erreur lors de la récupération des villes." }));
+                .catch(error => Swal.fire({
+                    icon: "error",
+                    title: "Erreur",
+                    text: "Erreur lors de la récupération des villes."
+                }));
         }
     }, [selectedResidenceCountry]);
 
@@ -59,7 +77,11 @@ export default function Simulation() {
         if (selectedResidenceCity) {
             axios.get(`/agences/${selectedResidenceCity}`)
                 .then(response => setResidenceAgencies(response.data))
-                .catch(error => Swal.fire({ icon: "error", title: "Erreur", text: "Erreur lors de la récupération des agences." }));
+                .catch(error => Swal.fire({
+                    icon: "error",
+                    title: "Erreur",
+                    text: "Erreur lors de la récupération des agences."
+                }));
         }
     }, [selectedResidenceCity]);
 
@@ -67,7 +89,11 @@ export default function Simulation() {
         if (selectedDestinationCountry) {
             axios.get(`/addresses/${selectedDestinationCountry}/villes`)
                 .then(response => setDestinationCities(response.data))
-                .catch(error => Swal.fire({ icon: "error", title: "Erreur", text: "Erreur lors de la récupération des villes." }));
+                .catch(error => Swal.fire({
+                    icon: "error",
+                    title: "Erreur",
+                    text: "Erreur lors de la récupération des villes."
+                }));
         }
     }, [selectedDestinationCountry]);
 
@@ -75,7 +101,11 @@ export default function Simulation() {
         if (selectedDestinationCity) {
             axios.get(`/agences/${selectedDestinationCity}`)
                 .then(response => setDestinationAgencies(response.data))
-                .catch(error => Swal.fire({ icon: "error", title: "Erreur", text: "Erreur lors de la récupération des agences." }));
+                .catch(error => Swal.fire({
+                    icon: "error",
+                    title: "Erreur",
+                    text: "Erreur lors de la récupération des agences."
+                }));
         }
     }, [selectedDestinationCity]);
 
@@ -131,21 +161,26 @@ export default function Simulation() {
 
             if (valid) {
                 const requestData = {
-                    paysDepart: values.residenceCountry,
-                    villeDepart: values.residenceCity,
-                    agenceDepart: values.residenceAgency,
-                    paysDestination: values.destinationCountry,
-                    villeDestination: values.destinationCity,
-                    agenceArrive: values.destinationAgency,
-                    currentDate: new Date(), // ou utilisez la date que vous avez
-                    colis: values.parcels
+                    paysDepart: formik.values.residenceCountry,
+                    villeDepart: formik.values.residenceCity,
+                    agenceDepart: formik.values.residenceAgency,
+                    paysDestination: formik.values.destinationCountry,
+                    villeDestination: formik.values.destinationCity,
+                    agenceArrive: formik.values.destinationAgency,
+                    currentDate: new Date().toISOString().split('T')[0], // ISO date format
+                    colis: formik.values.parcels.map(parcel => ({
+                        hauteur: parseFloat(parcel.height),
+                        largeur: parseFloat(parcel.width),
+                        longueur: parseFloat(parcel.length),
+                        poidsColis: parseFloat(parcel.weight),
+                        volumeColis: parseFloat(parcel.height) * parseFloat(parcel.width) * parseFloat(parcel.length)
+                    }))
                 };
 
-                console.log('Sending data to API:', requestData);
-                axios.post('simulation/calculate', requestData)
+                axios.post('/simulation/calculate', requestData)
                     .then(response => {
                         console.log("Simulation response:", response.data);
-                        // Logique supplémentaire pour afficher les informations calculées au client
+                        navigate('/recapitulatif', { state: { simulationData: response.data } });
                     })
                     .catch(error => {
                         console.error('API Error:', error);
@@ -156,6 +191,24 @@ export default function Simulation() {
             }
         }
     });
+
+
+    // const handleNumberOfParcelsChange = (e) => {
+    //     const numberOfParcels = parseInt(e.target.value, 10);
+    //     const currentNumberOfParcels = formik.values.parcels.length;
+    //
+    //     if (numberOfParcels > currentNumberOfParcels) {
+    //         const parcelsToAdd = numberOfParcels - currentNumberOfParcels;
+    //         for (let i = 0; i < parcelsToAdd; i++) {
+    //             formik.values.parcels.push({height: "", width: "", length: "", weight: ""});
+    //         }
+    //     } else {
+    //         formik.values.parcels.splice(numberOfParcels);
+    //     }
+    //
+    //     formik.setFieldValue("numberOfParcels", numberOfParcels);
+    //     setCurrentPage(0);
+    // };
 
     const handleNumberOfParcelsChange = (e) => {
         const numberOfParcels = parseInt(e.target.value, 10);
@@ -178,7 +231,7 @@ export default function Simulation() {
 
     return (
         <Wrapper id="simulation" className={"mt-5"}>
-            <div className="whiteBg" style={{ padding: "60px 0" }}>
+            <div className="whiteBg" style={{padding: "60px 0"}}>
                 <div className="container">
                     <HeaderInfo>
                         <h1 className="font40 extraBold">Simulation d'Envoi</h1>
@@ -297,14 +350,16 @@ export default function Simulation() {
                             </FormikProvider>
                             <div className="button-container">
                                 {currentPage > 0 && (
-                                    <button type="button" className="button-3d" onClick={() => setCurrentPage(currentPage - 1)}>
+                                    <button type="button" className="button-3d"
+                                            onClick={() => setCurrentPage(currentPage - 1)}>
                                         <span className="button-top">Précédent</span>
                                         <span className="button-bottom"></span>
                                         <span className="button-base"></span>
                                     </button>
                                 )}
                                 {(currentPage + 1) * itemsPerPage < formik.values.parcels.length && (
-                                    <button type="button" className="button-3d" onClick={() => setCurrentPage(currentPage + 1)}>
+                                    <button type="button" className="button-3d"
+                                            onClick={() => setCurrentPage(currentPage + 1)}>
                                         <span className="button-top">Suivant</span>
                                         <span className="button-bottom"></span>
                                         <span className="button-base"></span>

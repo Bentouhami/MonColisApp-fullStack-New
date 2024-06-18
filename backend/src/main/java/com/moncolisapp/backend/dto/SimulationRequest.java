@@ -23,7 +23,6 @@ public class SimulationRequest implements Serializable {
     private String paysDestination;
     private String villeDestination;
     private String agenceArrive;
-    private LocalDate dateLivraisonPrevu;
     private LocalDate currentDate; // pour calculer les dates envois/arrivées
     private List<ColisDTO> colis;
 

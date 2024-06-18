@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * DTO for {@link com.moncolisapp.backend.entities.Colis}
@@ -15,9 +16,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColisDTO implements Serializable {
-    private double hauteur;
-    private double largeur;
-    private double longueur;
-    private double poidsColis;
-    private double volumeColis;
+    private BigDecimal hauteur;
+    private BigDecimal largeur;
+    private BigDecimal longueur;
+    private BigDecimal poidsColis;
+    private BigDecimal volumeColis;
+
 }
