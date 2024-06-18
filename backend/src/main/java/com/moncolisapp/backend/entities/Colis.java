@@ -19,10 +19,6 @@ public class Colis implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    //    @OnDelete(action = OnDeleteAction.RESTRICT)
-    //    @JoinColumn(name = "id_envoi", nullable = false)
     @Getter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
@@ -39,13 +35,7 @@ public class Colis implements Serializable {
 
     private BigDecimal volumeColis;
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @ColumnDefault("nextval('colis_id_colis_seq'")
-//    @Column(name = "id_colis", nullable = false)
-//    public Integer getId() {
-//        return id;
-//    }
+
 
     @Column(name = "hauteur", nullable = false, precision = 10, scale = 2)
     public BigDecimal getHauteur() {

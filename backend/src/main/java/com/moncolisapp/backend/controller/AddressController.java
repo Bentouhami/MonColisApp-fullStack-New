@@ -31,7 +31,7 @@ public class AddressController {
      * @return List of AddressDTO objects
      */
     @GetMapping("/pays")
-    public ResponseEntity<List<String>> getCounties() {
+    public ResponseEntity<List<String>> getCountries() {
          return ResponseEntity.ok(addressService.getAllPays().getBody());
     }
 

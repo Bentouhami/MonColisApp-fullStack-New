@@ -30,14 +30,6 @@ public class Agence implements Serializable {
 
     private String localisation;
 
-//    @Id
-//    @ColumnDefault("nextval('agences_id_agence_seq'")
-//    @Column(name = "id_agence", nullable = false)
-//    public Integer getId() {
-//        return id;
-//    }
-
-
 
     @Column(name = "nom_agence", nullable = false, length = 50)
     public String getNomAgence() {

@@ -28,12 +28,6 @@ public class Address implements Serializable {
 
     private String pays;
 
-//    @Id
-//    @ColumnDefault("nextval('addresses_id_address_seq'")
-//    @Column(name = "id_address", nullable = false)
-//    public Integer getId() {
-//        return id;
-//    }
 
     @Column(name = "rue", nullable = false)
     public String getRue() {

@@ -35,7 +35,9 @@ public class SecurityConfig {
                                 "/api/v1/users/auth/register",
                                 "/api/v1/users/auth/check-email",
                                 "/api/v1/addresses/**",
-                                "/api/v1/agences/**").permitAll()
+                                "/api/v1/agences/**",
+                                "/api/v1/colis/calculate-price",
+                                "/api/v1/simulation/calculate-price").permitAll()
                         .requestMatchers("/api/v1/protected/**").authenticated()
                         .anyRequest().authenticated()
                 )

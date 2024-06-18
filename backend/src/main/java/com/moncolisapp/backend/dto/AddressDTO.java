@@ -9,5 +9,5 @@ import java.io.Serializable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record AddressDTO(String rue, String numero, String ville, String codepostal,
-                         String pays) implements Serializable {
+                                  String pays)  implements Serializable {
 }

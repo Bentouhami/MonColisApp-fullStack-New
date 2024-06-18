@@ -15,7 +15,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColisDTO implements Serializable {
-    private EnvoisDTO idEnvoi;
     private double hauteur;
     private double largeur;
     private double longueur;

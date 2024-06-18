@@ -20,4 +20,11 @@ public class ColisController {
         List<ColisDTO> validatedColis = colisService.validateColis(colisDTOList);
         return ResponseEntity.ok(validatedColis);
     }
+
+
+    @PostMapping("/calculate-price")
+    public ResponseEntity<Double> calculatePrice(@RequestBody List<ColisDTO> colisDTOList) {
+        double totalPrice = colisService.calculatePrixTotal(colisDTOList);
+        return ResponseEntity.ok(totalPrice);
+    }
 }
