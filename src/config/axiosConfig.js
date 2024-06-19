@@ -24,7 +24,7 @@ instance.interceptors.request.use(
 
 export const isAuthenticated = () => {
     const token = localStorage.getItem('token');
-    return !!token; // Retourne true si un token est présent, false sinon
+    return !!token; // return true of token is not null or undefined
 };
 
 export default instance;

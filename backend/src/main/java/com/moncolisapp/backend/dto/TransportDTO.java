@@ -16,10 +16,13 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransportDTO implements Serializable {
+    private Integer id;
     private Boolean estDisponible;
     private String plaqueMatriculation;
     private BigDecimal poidsActuel;
     private BigDecimal poidsDeBase;
     private BigDecimal volumeActuel;
     private BigDecimal volumeDeBase;
+
+
 }

@@ -76,13 +76,6 @@ public class Envois implements Serializable {
     @JoinColumn(name = "id_transport", nullable = false)
     private Transport idTransport;
 
-//    @Id
-//    @ColumnDefault("nextval('envois_id_envoi_seq'")
-//    @Column(name = "id_envoi", nullable = false)
-//    public Integer getId() {
-//        return id;
-//    }
-
     @Column(name = "code_de_suivi", nullable = false, length = 20)
     public String getCodeDeSuivi() {
         return codeDeSuivi;

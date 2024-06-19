@@ -16,4 +16,5 @@ public interface AgenceRepository extends JpaRepository<Agence, Integer> {
             " WHERE addr.ville = :ville")
     List<String> findAgencesByVille(String ville);
 
+    Agence findAgencesByNomAgence(String nomAgence);
 }

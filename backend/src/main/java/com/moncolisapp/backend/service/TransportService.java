@@ -25,6 +25,7 @@ public class TransportService {
         return poidsDisponible.compareTo(BigDecimal.ZERO) >= 0 && volumeDisponible.compareTo(BigDecimal.ZERO) >= 0;
     }
 
+
     public LocalDate calculateNextAvailableDate() {
         LocalDate currentDate = LocalDate.now();
         LocalDate nextTuesday = getNextTuesday(currentDate);
@@ -39,7 +40,8 @@ public class TransportService {
     }
 
     public void updateTransport(BigDecimal poidsTotal, BigDecimal volumeTotal) {
-        Transport transport = transportRepository.findById(1).orElseThrow(() -> new RuntimeException("Transport not found"));
+        Transport transport = transportRepository.findById(1).orElseThrow(() ->
+                new RuntimeException("Transport not found"));
 
         transport.setPoidsActuel(transport.getPoidsActuel().add(poidsTotal));
         transport.setVolumeActuel(transport.getVolumeActuel().add(volumeTotal));

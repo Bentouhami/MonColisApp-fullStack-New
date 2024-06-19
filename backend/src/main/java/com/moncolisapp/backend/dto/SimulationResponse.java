@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+/**
+ * DTO for SimulationResponse (response of the simulation endpoint)
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,5 +30,8 @@ public class SimulationResponse implements Serializable {
     private BigDecimal volumeTotal;
     private BigDecimal prixTotal;
     private String statut;
-//    private List<ColisDTO> colis;
+    private List<ColisDTO> colis;
+    private Integer idTarif;
+//    Integer transportId;
+
 }

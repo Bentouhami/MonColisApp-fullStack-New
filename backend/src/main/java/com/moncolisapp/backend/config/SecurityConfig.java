@@ -2,11 +2,13 @@ package com.moncolisapp.backend.config;
 
 import com.moncolisapp.backend.security.CustomUserDetailsService;
 import com.moncolisapp.backend.security.JwtRequestFilter;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,7 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/users/auth/login",
                                 "/api/v1/users/auth/register",
@@ -39,9 +41,9 @@ public class SecurityConfig {
                                 "/api/v1/colis/calculate-price",
                                 "/api/v1/simulation/calculate-price",
                                 "/api/v1/simulation/calculate",
-                                "/api/v1/envois/valider",
-                                "/api/v1/transports/verify-space").permitAll()
-                        .requestMatchers("/api/v1/protected/**").authenticated()
+                                "/api/v1/transports/**").permitAll()
+                        .requestMatchers("/api/v1/protected/**",
+                                "/api/v1/envois/valider").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -57,7 +59,7 @@ public class SecurityConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

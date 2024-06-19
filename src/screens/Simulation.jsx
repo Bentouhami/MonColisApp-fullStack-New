@@ -51,6 +51,7 @@ export default function Simulation() {
     const navigate = useNavigate(); // Initialize useNavigate
 
 
+    // Get the list of departure countries and cities from the server when the component is mounted
     useEffect(() => {
         axios.get('/addresses/pays')
             .then(response => setCountries(response.data))
@@ -62,6 +63,7 @@ export default function Simulation() {
     }, []);
 
     useEffect(() => {
+        // Get the list of departure cities for the selected residence country
         if (selectedResidenceCountry) {
             axios.get(`/addresses/${selectedResidenceCountry}/villes`)
                 .then(response => setResidenceCities(response.data))
@@ -73,7 +75,9 @@ export default function Simulation() {
         }
     }, [selectedResidenceCountry]);
 
+    // Get the list of departure agencies for the selected residence city
     useEffect(() => {
+        // If the selected residence city is not empty
         if (selectedResidenceCity) {
             axios.get(`/agences/${selectedResidenceCity}`)
                 .then(response => setResidenceAgencies(response.data))
@@ -85,6 +89,7 @@ export default function Simulation() {
         }
     }, [selectedResidenceCity]);
 
+    // Get the list of destination countries and cities from the server
     useEffect(() => {
         if (selectedDestinationCountry) {
             axios.get(`/addresses/${selectedDestinationCountry}/villes`)
@@ -97,6 +102,7 @@ export default function Simulation() {
         }
     }, [selectedDestinationCountry]);
 
+    // Get the list of destination agencies for the selected destination city
     useEffect(() => {
         if (selectedDestinationCity) {
             axios.get(`/agences/${selectedDestinationCity}`)
@@ -147,11 +153,15 @@ export default function Simulation() {
             const { parcels } = values;
             let valid = true;
             let poidsTotal = 0;
+
+            // Check if the parcels are valid and calculate the total weight
             parcels.forEach(parcel => {
+                // Check if the dimensions are valid
                 const volume = parcel.height * parcel.width * parcel.length;
                 const totalDimensions = parcel.height + parcel.width + parcel.length;
                 const maxDimension = Math.max(parcel.height, parcel.width, parcel.length);
 
+                // Check if the dimensions are valid and the total weight is within the limits
                 if (totalDimensions > 360 || maxDimension > 120 || volume < 1728 || parcel.weight < 1 || parcel.weight > 70) {
                     valid = false;
                 } else {
@@ -180,6 +190,8 @@ export default function Simulation() {
                 axios.post('/simulation/calculate', requestData)
                     .then(response => {
                         console.log("Simulation response:", response.data);
+                        // Redirect to the recapitulatif page with the simulation data as a state parameter
+                        // to be passed to the Recapitulatif component
                         navigate('/recapitulatif', { state: { simulationData: response.data } });
                     })
                     .catch(error => {
@@ -192,23 +204,6 @@ export default function Simulation() {
         }
     });
 
-
-    // const handleNumberOfParcelsChange = (e) => {
-    //     const numberOfParcels = parseInt(e.target.value, 10);
-    //     const currentNumberOfParcels = formik.values.parcels.length;
-    //
-    //     if (numberOfParcels > currentNumberOfParcels) {
-    //         const parcelsToAdd = numberOfParcels - currentNumberOfParcels;
-    //         for (let i = 0; i < parcelsToAdd; i++) {
-    //             formik.values.parcels.push({height: "", width: "", length: "", weight: ""});
-    //         }
-    //     } else {
-    //         formik.values.parcels.splice(numberOfParcels);
-    //     }
-    //
-    //     formik.setFieldValue("numberOfParcels", numberOfParcels);
-    //     setCurrentPage(0);
-    // };
 
     const handleNumberOfParcelsChange = (e) => {
         const numberOfParcels = parseInt(e.target.value, 10);
