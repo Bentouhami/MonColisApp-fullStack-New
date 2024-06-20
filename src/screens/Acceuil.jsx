@@ -2,11 +2,11 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Swal from "sweetalert2";
-import axios from "../config/axiosConfig"; // Utiliser la configuration Axios
+import axios, {fetchCsrfToken} from "../config/axiosConfig"; // Utiliser la configuration Axios
 import FullButton from "../components/Buttons/FullButton";
 import HeaderImage from "../assets/img/welcome.svg";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../components/Elements/AuthContext"; // Importer le contexte d'authentification
+import { AuthContext } from "../components/Elements/AuthContext";
 
 export default function Acceuil() {
     const navigate = useNavigate();
@@ -24,9 +24,9 @@ export default function Acceuil() {
             });
 
             if (email) {
+                await fetchCsrfToken();
                 const emailCheckResponse = await axios.post("/users/auth/check-email", { email: email });
 
-                if (emailCheckResponse.data.exists) {
                     const { value: password } = await Swal.fire({
                         title: "Enter your password",
                         input: "password",
@@ -40,12 +40,13 @@ export default function Acceuil() {
                     });
 
                     if (password) {
+                        await fetchCsrfToken();
                         const loginResponse = await axios.post("/users/auth/login", { email, password });
 
                         if (loginResponse.data.success) {
-                            // Set the token in local storage for the next request to the server to authenticate the user
+                            // set the token in local storage for the next request to the server to authenticate the user
                             localStorage.setItem('token', loginResponse.data.token);
-                            setIsAuthenticated(true); // Mettre à jour l'état d'authentification
+                            setIsAuthenticated(true); // update the authentication state
 
                             Swal.fire(`Welcome back, ${email}`).then(r => {
                                 if (r.value) {
@@ -56,9 +57,6 @@ export default function Acceuil() {
                             await Swal.fire("Invalid email or password");
                         }
                     }
-                } else {
-                    await Swal.fire("Email not found");
-                }
             }
         } catch (error) {
             console.error("There was an error!", error);

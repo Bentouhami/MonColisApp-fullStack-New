@@ -7,6 +7,7 @@ import com.moncolisapp.backend.mapper.*;
 import com.moncolisapp.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -61,8 +62,9 @@ public class EnvoisService {
     @Autowired
     private TarifRepository tarifRepository;
 
-     @Autowired
+    @Autowired
     private TransportRepository transportRepository;
+    private EnvoisMapper envoisMapper;
 
     public boolean validerEnvoi(EnvoisRequestDTO envoisRequestDTO, String userEmail) {
         try {
@@ -179,7 +181,8 @@ public class EnvoisService {
     }
 
     /**
-     *  get the destinataire address from the request
+     * get the destinataire address from the request
+     *
      * @param envoisRequestDTO the request from my frontend
      * @return the address object
      */
@@ -211,5 +214,29 @@ public class EnvoisService {
             sb.append(characters.charAt(random.nextInt(characters.length())));
         }
         return sb.toString();
+    }
+
+
+    /**
+     * get all the envois by the client email
+     *
+     * @param email the client email
+     * @return the list of envois
+     */
+
+    public List<Envois> getEnvoisByClientEmail(String email) {
+        Client client = clientRepository.findClientByEmail(email);
+        if (client == null) {
+            throw new RuntimeException("Client not found");
+        }
+        return envoisRepository.findByIdClient_Id(client.getId());
+    }
+
+    @Transactional
+    public void deleteEnvoisByIds(List<Integer> envoisIds) {
+        // convert Long to Integer
+//        List<Integer> envoisIdsInt = envoisIds.stream().map(Long::intValue).collect(Collectors.toList());
+        // delete the envois
+        envoisRepository.deleteAllById(envoisIds);
     }
 }

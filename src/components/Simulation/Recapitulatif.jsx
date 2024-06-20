@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios, { isAuthenticated } from '../../config/axiosConfig';
+import axios, { fetchCsrfToken, isAuthenticated } from '../../config/axiosConfig';
 import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Wrapper } from "./CommonStyles";
@@ -12,11 +12,12 @@ export default function Recapitulatif() {
     // simulationData is a JSON object containing the user's simulation data from the previous page
     const simulationData = state ? state.simulationData : JSON.parse(localStorage.getItem('simulationData'));
 
-    console.log("Simulation datas:", simulationData);
+    // console.log("Simulation datas:", simulationData);
+
     const handleValidation = async () => {
-        // Check if the user is authenticated
+        // check if the user is authenticated
         if (!isAuthenticated()) {
-            // If not, redirect to the login page and do not proceed with the simulation
+            // if not, redirect to the login page and do not proceed with the simulation
             localStorage.setItem('simulationData', JSON.stringify(simulationData));
             Swal.fire({
                 icon: 'error',
@@ -27,18 +28,18 @@ export default function Recapitulatif() {
             return;
         }
 
-        // Check transport availability and get the destinataire information
+        // check transport availability and get the destinataire information
         try {
-            // Send a GET request to the /transports/verify-space endpoint with the user's simulation data
-            // to check if there is enough space available for the simulation in transport
+            await fetchCsrfToken();
+            // calculate and verify if the space is available for the simulation
+            // and get true or false if the space is available and the next available date to transfert
             const response = await axios.post('/transports/verify-space', {
                 poidsTotal: simulationData.poidsTotal,
                 volumeTotal: simulationData.volumeTotal
             });
 
-            // If the space is available, ask for the destinataire information
+            // if the space is available, ask for the destinataire information
             if (response.data.available) {
-                // Get destinataire infos
                 const { value: formValues } = await Swal.fire({
                     title: 'Informations du destinataire',
                     html: `
@@ -66,6 +67,7 @@ export default function Recapitulatif() {
                     }
                 });
 
+                // if the form is valid, ask for the destinataire information
                 if (formValues) {
                     const destinataireInfo = {
                         nomPrenom: formValues[0],
@@ -80,7 +82,7 @@ export default function Recapitulatif() {
                         }
                     };
 
-                    // Validate the shipment with recipient information
+                    // combine the simulation data with the destinataire information
                     const envoisDTO = {
                         ...simulationData,
                         poidsTotal: simulationData.poidsTotal.toString(),
@@ -89,15 +91,20 @@ export default function Recapitulatif() {
                         idDestinataire: destinataireInfo
                     };
 
-                    // send the data to the server to validate the envois
+                    // send the simulation data to the server
+                    await fetchCsrfToken();
                     await axios.post('/envois/valider', envoisDTO);
                     Swal.fire({
                         icon: 'success',
                         title: 'Envoi validé',
                         text: 'Votre envoi a été validé avec succès!',
                     });
+
+                    // Remove simulation data from local storage
                     localStorage.removeItem('simulationData');
-                    navigate('/confirmation');
+
+                    // pass the envois list to the showEnvois component
+                  navigate('/showEnvois');
                 }
             } else {
                 await Swal.fire({
@@ -117,7 +124,7 @@ export default function Recapitulatif() {
     };
 
     return (
-        <Wrapper id="recapitulatif">
+        <Wrapper id="recapitulatif" className="container flexSpaceCenter">
             <div className="container mt-5 mb-5">
                 <h1>Récapitulatif de votre envoi</h1>
                 <p><strong>Pays de départ:</strong> {simulationData.paysDepart}</p>

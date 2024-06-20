@@ -52,3 +52,36 @@ export const SubmitButton = styled.button`
         background-color: #580cd2;
     }
 `;
+
+export const Table = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+`;
+
+export const Pagination = styled.div`
+    margin-top: 20px;
+`;
+
+export const PageButton = styled.button`
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: ${props => (props.className.includes('active') ? "#007bff" : "#fff")};
+    color: ${props => (props.className.includes('active') ? "#fff" : "#000")};
+    cursor: pointer;
+    &:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    &.active {
+        background-color: #007bff;
+        color: #fff;
+    }
+`;

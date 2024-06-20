@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import axios from "../config/axiosConfig"; // Importer votre configuration Axios
+import axios, {fetchCsrfToken} from "../config/axiosConfig"; // Importer votre configuration Axios
 import ContactImg1 from "../assets/img/sign-up.svg";
 
 // Définir le schéma de validation avec Yup
@@ -49,6 +49,7 @@ export default function Register() {
                 ...values,
                 sexe: values.sexe === "male",
             };
+            await fetchCsrfToken();
             const response = await axios.post("/users/auth/register", updatedValues);
             if (response.data === "User created") {
                 console.log("Utilisateur inscrit avec succès:", response.data);

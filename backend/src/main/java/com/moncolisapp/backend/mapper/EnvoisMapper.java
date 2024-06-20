@@ -12,4 +12,6 @@ public interface EnvoisMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Envois partialUpdate(EnvoisDTO envoisDTO, @MappingTarget Envois envois);
+
+
 }

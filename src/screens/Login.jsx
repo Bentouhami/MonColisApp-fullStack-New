@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import axios from "../config/axiosConfig";
+import axios, {fetchCsrfToken} from "../config/axiosConfig";
 import LoginImg from "../assets/img/loging.svg";
 import { AuthContext } from "../components/Elements/AuthContext";
 
@@ -26,6 +26,7 @@ export default function Login() {
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             try {
+                await fetchCsrfToken();
                 const response = await axios.post("/users/auth/login", {
                     email: values.email,
                     password: values.password

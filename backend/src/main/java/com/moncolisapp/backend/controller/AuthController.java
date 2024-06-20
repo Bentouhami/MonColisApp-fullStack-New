@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users/auth/")
+@RequestMapping("/api/v1/users/auth")
 public class AuthController {
 
     @Autowired
@@ -43,6 +43,7 @@ public class AuthController {
     }
 
 
+    // create check email request method to check if user exists in database
     @PostMapping("/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestBody EmailRequest emailRequest) {
         Map<String, Boolean> response = new HashMap<>();

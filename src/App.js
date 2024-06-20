@@ -11,8 +11,8 @@ import TopNavbar from "./components/Nav/TopNavbar";
 import Footer from "./screens/Footer.jsx";
 import Acceuil from "./screens/Acceuil";
 import Login from "./screens/Login";
-import ProtectedResource from "./screens/ProtectedResource";
 import Recapitulatif from "./components/Simulation/Recapitulatif";
+import MesEnvois from "./screens/MesEnvois";
 
 export default function App() {
     return (
@@ -33,7 +33,7 @@ export default function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/protected-resource" element={<ProtectedResource />} />
+                    <Route path="/showEnvois" element={<MesEnvois />} />
                 </Routes>
                 <Footer />
             </Router>
