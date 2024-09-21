@@ -29,7 +29,7 @@
     "react-slick": "^0.28.1",
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.2.1",
-    "sweetalert2": "^11.11.0",
+    "sweetalert2": "^11.6.13",
     "web-vitals": "^1.1.2",
     "webpack": "^5.91.0",
     "yup": "^1.4.0"

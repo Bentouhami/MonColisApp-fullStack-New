@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import LogoImg from "../assets/svg/Logo";
+import LogoImg from "../../assets/svg/Logo";
 
 export default function Footer() {
     const getCurrentYear = () => {
@@ -32,6 +32,7 @@ const FooterWrapper = styled.div`
     width: 100%;
     background-color: #000;
     padding: 20px 0;
+    bottom: 0;
 `;
 
 const InnerWrapper = styled.div`

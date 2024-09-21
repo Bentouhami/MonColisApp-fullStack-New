@@ -9,9 +9,17 @@ export default function MesEnvois() {
     const [selectedEnvois, setSelectedEnvois] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // the current page number of the pagination
     const [currentPage, setCurrentPage] = useState(1);
+
+    // envois per page (number of envois per page)
     const [envoisPerPage] = useState(3);
+
+    // filtering envois by code de suivi (code of the envois)
     const [searchCode, setSearchCode] = useState('');
+
+    // filtering envois by dates
     const [searchDate, setSearchDate] = useState('');
 
     useEffect(() => {
@@ -29,6 +37,7 @@ export default function MesEnvois() {
         fetchEnvois();
     }, []);
 
+    // function to handle the selected envois in the table by checkbox
     const toggleEnvoiSelection = id => {
         if (selectedEnvois.includes(id)) {
             setSelectedEnvois(selectedEnvois.filter(envoiId => envoiId !== id));
@@ -37,6 +46,7 @@ export default function MesEnvois() {
         }
     };
 
+    // function to delete selected envois
     const deleteSelectedEnvois = async () => {
         try {
             await fetchCsrfToken();
@@ -44,19 +54,22 @@ export default function MesEnvois() {
             setEnvois(envois.filter(envoi => !selectedEnvois.includes(envoi.id)));
             setSelectedEnvois([]); // Reset selection after deletion
         } catch (error) {
-            console.error('Erreur lors de la suppression : ', error);
             setError('Erreur lors de la suppression');
         }
     };
 
+    // function to handle the search by code de suivi
     const filteredEnvois = envois.filter(envoi => {
         return envoi.codeDeSuivi.toLowerCase().includes(searchCode.toLowerCase()) &&
             (!searchDate || new Date(envoi.dateEnvoi).toLocaleDateString() === new Date(searchDate).toLocaleDateString());
     });
 
+    // function to handle the pagination of the envois pages
     const totalPages = Math.ceil(filteredEnvois.length / envoisPerPage);
 
+    //
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
 
     const getPaginationItems = () => {
         let items = [];

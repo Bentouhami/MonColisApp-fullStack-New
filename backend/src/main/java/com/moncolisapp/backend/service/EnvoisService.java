@@ -225,7 +225,12 @@ public class EnvoisService {
      */
 
     public List<Envois> getEnvoisByClientEmail(String email) {
-        Client client = clientRepository.findClientByEmail(email);
+        Client client = null;
+        try {
+            client = clientRepository.findClientByEmail(email);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         if (client == null) {
             throw new RuntimeException("Client not found");
         }
@@ -234,9 +239,6 @@ public class EnvoisService {
 
     @Transactional
     public void deleteEnvoisByIds(List<Integer> envoisIds) {
-        // convert Long to Integer
-//        List<Integer> envoisIdsInt = envoisIds.stream().map(Long::intValue).collect(Collectors.toList());
-        // delete the envois
         envoisRepository.deleteAllById(envoisIds);
     }
 }

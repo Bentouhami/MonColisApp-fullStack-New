@@ -7,6 +7,7 @@ import axios, {fetchCsrfToken} from "../config/axiosConfig";
 import LoginImg from "../assets/img/loging.svg";
 import { AuthContext } from "../components/Elements/AuthContext";
 
+// validation schema for login form
 const validationSchema = Yup.object({
     email: Yup.string().email("Email invalide")
         .required("L'email est requis"),
@@ -18,6 +19,7 @@ export default function Login() {
     const navigate = useNavigate();
     const { setIsAuthenticated } = useContext(AuthContext);
 
+    // formik configuration for login form to handle form validation and submit request
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -26,6 +28,7 @@ export default function Login() {
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             try {
+                //  csrf token is fetched from the server
                 await fetchCsrfToken();
                 const response = await axios.post("/users/auth/login", {
                     email: values.email,

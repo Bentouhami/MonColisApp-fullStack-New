@@ -8,7 +8,7 @@ import Tarifs from "./screens/Tarifs.jsx";
 import Contact from "./screens/Contact.jsx";
 import Register from "./screens/Register.jsx";
 import TopNavbar from "./components/Nav/TopNavbar";
-import Footer from "./screens/Footer.jsx";
+import Footer from "./components/Nav/Footer.jsx";
 import Acceuil from "./screens/Acceuil";
 import Login from "./screens/Login";
 import Recapitulatif from "./components/Simulation/Recapitulatif";
@@ -35,8 +35,8 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/showEnvois" element={<MesEnvois />} />
                 </Routes>
-                <Footer />
             </Router>
+                <Footer />
         </AuthProvider>
     );
 }

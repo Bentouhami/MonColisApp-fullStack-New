@@ -19,7 +19,7 @@ export default function Recapitulatif() {
         if (!isAuthenticated()) {
             // if not, redirect to the login page and do not proceed with the simulation
             localStorage.setItem('simulationData', JSON.stringify(simulationData));
-            Swal.fire({
+            await Swal.fire({
                 icon: 'error',
                 title: 'Non connecté',
                 text: 'Vous devez être connecté pour valider votre envoi.',
@@ -94,7 +94,7 @@ export default function Recapitulatif() {
                     // send the simulation data to the server
                     await fetchCsrfToken();
                     await axios.post('/envois/valider', envoisDTO);
-                    Swal.fire({
+                    await Swal.fire({
                         icon: 'success',
                         title: 'Envoi validé',
                         text: 'Votre envoi a été validé avec succès!',
